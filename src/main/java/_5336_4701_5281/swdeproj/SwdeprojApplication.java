@@ -1,4 +1,4 @@
-package __5281.swdeproj;
+package _5336_4701_5281.swdeproj;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
