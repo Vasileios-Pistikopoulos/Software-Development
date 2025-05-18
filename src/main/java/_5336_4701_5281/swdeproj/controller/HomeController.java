@@ -1,12 +1,15 @@
 package _5336_4701_5281.swdeproj.controller;
-
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class HomeController {
-    @RequestMapping(value = {"","/home","/"})
-    public String displayHomePage() {
-        return "home"; // Assuming you have a home.html template in your resources/templates directory
+
+    @GetMapping({"/", "/home"})
+    public String home(Model model) {
+        return "home";
     }
+
 }
+

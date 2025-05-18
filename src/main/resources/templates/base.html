@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title layout:title-pattern="$CONTENT_TITLE - Traineeship App">Default Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { padding-top: 70px; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-dark bg-dark fixed-top">
+    <div class="container-fluid">
+        <a class="navbar-brand" th:href="@{/}">Traineeship</a>
+
+        <div class="d-flex align-items-center">
+
+            <!-- Αν είναι login -->
+            <div class="dropdown" sec:authorize="isAuthenticated()">
+                <a class="btn btn-outline-light dropdown-toggle"
+                   href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    Welcome, <span sec:authentication="name"></span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    <li><a class="dropdown-item" th:href="@{/profile}">Profile</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" th:href="@{/logout}">Logout</a></li>
+                </ul>
+            </div>
+
+            <!-- Αν ΔΕΝ είναι login -->
+            <div sec:authorize="!isAuthenticated()">
+                <a class="btn btn-outline-light me-2" th:href="@{/login}">Login</a>
+                <a class="btn btn-primary" th:href="@{/register}">Sign Up</a>
+            </div>
+        </div>
+
+    </div>
+</nav>
+
+
+<main class="container mt-5" layout:fragment="content">
+    <!-- default content if no fragment provided -->
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+    <title>Registration Success</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="container text-center">
+        <h2>Registration Completed</h2>
+        <p>You can now <a th:href="@{/login}">log in</a>.</p>
+    </div>
+</section>
+</body>
+</html>

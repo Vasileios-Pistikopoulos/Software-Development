@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+    <title>Register</title>
+    <script>
+        function showRoleFields() {
+            const role = document.getElementById("role").value;
+            document.querySelectorAll(".role-fields").forEach(el => el.style.display = "none");
+
+            if (role) {
+                document.getElementById(role.toLowerCase() + "-fields").style.display = "block";
+            }
+        }
+    </script>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="container mt-5">
+        <h2 class="mb-4">Sign Up</h2>
+
+        <!-- Εμφάνιση σφάλματος -->
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+        <form th:action="@{/register}" th:object="${userDto}" method="post">
+            <!-- Κοινά πεδία -->
+            <div class="mb-3">
+                <label>Username</label>
+                <input type="text" th:field="*{username}" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label>Email</label>
+                <input type="email" th:field="*{email}" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label>Password</label>
+                <input type="password" th:field="*{password}" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label>Role</label>
+                <select th:field="*{role}" class="form-select" id="role" onchange="showRoleFields()" required>
+                    <option value="">-- Select Role --</option>
+                    <option value="TRAINEE">Student</option>
+                    <option value="COMPANY">Company</option>
+                    <option value="PROFESSOR">Professor</option>
+                    <option value="COMMITTEE">Committee</option>
+                </select>
+            </div>
+
+            <!-- Trainee fields -->
+            <div id="trainee-fields" class="role-fields" style="display: none;">
+                <div class="mb-3">
+                    <label>Full Name</label>
+                    <input type="text" th:field="*{traineeFullName}" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label>Student ID</label>
+                    <input type="text" th:field="*{studentId}" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label>Skills (comma-separated)</label>
+                    <input type="text" th:field="*{traineeSkills}" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label>Interests (comma-separated)</label>
+                    <input type="text" th:field="*{traineeInterests}" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label>Preferred Location</label>
+                    <input type="text" th:field="*{preferredLocation}" class="form-control">
+                </div>
+            </div>
+
+            <!-- Company fields -->
+            <div id="company-fields" class="role-fields" style="display: none;">
+                <div class="mb-3">
+                    <label>Company Name</label>
+                    <input type="text" th:field="*{companyName}" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label>Location</label>
+                    <input type="text" th:field="*{companyLocation}" class="form-control">
+                </div>
+            </div>
+
+            <!-- Professor fields -->
+            <div id="professor-fields" class="role-fields" style="display: none;">
+                <div class="mb-3">
+                    <label>Full Name</label>
+                    <input type="text" th:field="*{professorFullName}" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label>Interests (comma-separated)</label>
+                    <input type="text" th:field="*{professorInterests}" class="form-control">
+                </div>
+            </div>
+
+            <!-- Committee fields -->
+            <div id="committee-fields" class="role-fields" style="display: none;">
+                <div class="mb-3">
+                    <p>No extra information required.</p>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Register</button>
+        </form>
+    </div>
+</section>
+</body>
+</html>
