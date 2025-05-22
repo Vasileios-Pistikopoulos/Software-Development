@@ -21,6 +21,10 @@ public class CompanyProfile {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @OneToOne
+    @JoinColumn(name = "company_id", nullable = false)
+    private Company company;
+
     // === Constructors ===
 
     public CompanyProfile() {}
@@ -42,6 +46,9 @@ public class CompanyProfile {
 
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }
+
+    public Company getCompany() { return company; }
+    public void setCompany(Company company) { this.company = company; }
 
     // === equals & hashCode ===
 

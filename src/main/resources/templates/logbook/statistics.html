@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+    <title>Logbook Statistics</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Logbook Statistics</h2>
+            <a th:href="@{/logbook}" class="btn btn-outline-primary">
+                <i class="bi bi-journal-text"></i> View Logbook
+            </a>
+        </div>
+
+        <!-- Traineeship Info -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Current Traineeship</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p class="mb-1">
+                            <strong>Company:</strong> 
+                            <span th:text="${traineeship.company.name}">Company Name</span>
+                        </p>
+                        <p class="mb-1">
+                            <strong>Location:</strong> 
+                            <span th:text="${traineeship.location}">Location</span>
+                        </p>
+                        <p class="mb-0">
+                            <strong>Supervisor:</strong> 
+                            <span th:text="${traineeship.supervisor.fullName}">Professor Name</span>
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="mb-1">
+                            <strong>Start Date:</strong> 
+                            <span th:text="${#temporals.format(traineeship.startDate, 'dd/MM/yyyy')}">01/01/2024</span>
+                        </p>
+                        <p class="mb-1">
+                            <strong>End Date:</strong> 
+                            <span th:text="${#temporals.format(traineeship.endDate, 'dd/MM/yyyy')}">30/06/2024</span>
+                        </p>
+                        <p class="mb-0">
+                            <strong>Duration:</strong> 
+                            <span th:text="${traineeship.startDate.until(traineeship.endDate).toTotalMonths() + ' months'}">6 months</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Total Hours Logged</h5>
+                        <div class="display-1 mb-3" th:text="${#numbers.formatDecimal(totalHours, 1, 1)}">0.0</div>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" 
+                                 th:style="'width: ' + ${totalHours * 100 / 160} + '%'"
+                                 th:attr="aria-valuenow=${totalHours}"
+                                 aria-valuemin="0" aria-valuemax="160">
+                                <span th:text="${#numbers.formatDecimal(totalHours * 100 / 160, 1, 1)} + '%'">0%</span>
+                            </div>
+                        </div>
+                        <small class="text-muted">Target: 160 hours</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Approved Entries</h5>
+                        <div class="display-1 mb-3" th:text="${approvedEntries}">0</div>
+                        <p class="text-muted mb-0">Successfully approved logbook entries</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Learning Progress -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Learning Progress</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-4">
+                    <h6>Required Skills</h6>
+                    <div>
+                        <span th:each="skill : ${traineeship.requiredSkills}" 
+                              class="badge bg-primary me-1" th:text="${skill}">Skill</span>
+                    </div>
+                </div>
+                <div>
+                    <h6>Topics Covered</h6>
+                    <div>
+                        <span th:each="topic : ${traineeship.topics}" 
+                              class="badge bg-info me-1" th:text="${topic}">Topic</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html> 

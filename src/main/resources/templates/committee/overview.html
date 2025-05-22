@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+    <title>Committee Overview</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>System Overview</h2>
+            <a th:href="@{/committee/applications}" class="btn btn-primary">
+                <i class="bi bi-list-check"></i> Review Applications
+            </a>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="row g-4 mb-4">
+            <!-- Traineeship Stats -->
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Traineeships</h5>
+                        <div class="list-group list-group-flush">
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                Total
+                                <span class="badge bg-primary rounded-pill" 
+                                      th:text="${stats.totalTraineeships}">0</span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                Open Positions
+                                <span class="badge bg-success rounded-pill" 
+                                      th:text="${stats.openTraineeships}">0</span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                Filled Positions
+                                <span class="badge bg-info rounded-pill" 
+                                      th:text="${stats.filledTraineeships}">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Application Stats -->
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Applications</h5>
+                        <div class="list-group list-group-flush">
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                Pending
+                                <span class="badge bg-warning rounded-pill" 
+                                      th:text="${stats.pendingApplications}">0</span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                Approved
+                                <span class="badge bg-success rounded-pill" 
+                                      th:text="${stats.approvedApplications}">0</span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                Rejected
+                                <span class="badge bg-danger rounded-pill" 
+                                      th:text="${stats.rejectedApplications}">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Evaluation Stats -->
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Evaluations</h5>
+                        <div class="list-group list-group-flush">
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                Company Evaluations
+                                <span class="badge bg-primary rounded-pill" 
+                                      th:text="${stats.companyEvaluations}">0</span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                Professor Evaluations
+                                <span class="badge bg-info rounded-pill" 
+                                      th:text="${stats.professorEvaluations}">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Average Ratings -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Average Ratings</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <h6>Motivation</h6>
+                            <div class="display-4" th:text="${#numbers.formatDecimal(stats.avgMotivationRating, 1, 1)}">0.0</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <h6>Effectiveness</h6>
+                            <div class="display-4" th:text="${#numbers.formatDecimal(stats.avgEffectivenessRating, 1, 1)}">0.0</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <h6>Efficiency</h6>
+                            <div class="display-4" th:text="${#numbers.formatDecimal(stats.avgEfficiencyRating, 1, 1)}">0.0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="row g-4">
+            <!-- Recent Applications -->
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Recent Applications</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="list-group list-group-flush">
+                            <div th:each="app : ${stats.recentApplications}" 
+                                 class="list-group-item">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1" th:text="${app.trainee.fullName}">John Doe</h6>
+                                    <small th:text="${#temporals.format(app.applicationDate, 'dd/MM/yyyy')}">01/01/2024</small>
+                                </div>
+                                <p class="mb-1" th:text="${app.traineeship.company.name}">Company Name</p>
+                                <small th:class="${'text-' + 
+                                    (app.status == 'PENDING' ? 'warning' : 
+                                     app.status == 'APPROVED' ? 'success' : 'danger')}"
+                                       th:text="${app.status}">Status</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Evaluations -->
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Recent Evaluations</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="list-group list-group-flush">
+                            <div th:each="eval : ${stats.recentEvaluations}" 
+                                 class="list-group-item">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1" th:text="${eval.evaluator.fullName}">Evaluator Name</h6>
+                                    <small th:text="${#temporals.format(eval.date, 'dd/MM/yyyy')}">01/01/2024</small>
+                                </div>
+                                <p class="mb-1" th:text="${eval.traineeship.trainee.fullName}">Trainee Name</p>
+                                <small th:text="${eval.evaluatorType}">Evaluator Type</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html> 

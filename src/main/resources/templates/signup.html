@@ -14,101 +14,201 @@
                 document.getElementById(role.toLowerCase() + "-fields").style.display = "block";
             }
         }
+
+        function validateForm() {
+            const username = document.getElementById("username").value;
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            const role = document.getElementById("role").value;
+            
+            // Clear previous error messages
+            document.querySelectorAll('.error-message').forEach(el => el.remove());
+            
+            let isValid = true;
+
+            // Username validation
+            if (username.length < 3 || username.length > 50) {
+                showError("username", "Username must be between 3 and 50 characters");
+                isValid = false;
+            }
+
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showError("email", "Please enter a valid email address");
+                isValid = false;
+            }
+
+            // Password validation
+            if (password.length < 6) {
+                showError("password", "Password must be at least 6 characters long");
+                isValid = false;
+            }
+
+            // Role-specific validation
+            if (role === "ROLE_TRAINEE") {
+                const fullName = document.getElementById("traineeFullName").value;
+                if (!fullName) {
+                    showError("traineeFullName", "Full name is required for trainees");
+                    isValid = false;
+                }
+            } else if (role === "ROLE_COMPANY") {
+                const companyName = document.getElementById("companyName").value;
+                if (!companyName) {
+                    showError("companyName", "Company name is required");
+                    isValid = false;
+                }
+            } else if (role === "ROLE_PROFESSOR") {
+                const fullName = document.getElementById("professorFullName").value;
+                if (!fullName) {
+                    showError("professorFullName", "Full name is required for professors");
+                    isValid = false;
+                }
+            }
+
+            return isValid;
+        }
+
+        function showError(fieldId, message) {
+            const field = document.getElementById(fieldId);
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message text-danger mt-1';
+            errorDiv.textContent = message;
+            field.parentNode.appendChild(errorDiv);
+            field.classList.add('is-invalid');
+        }
     </script>
+    <style>
+        .error-message {
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+        .is-invalid {
+            border-color: #dc3545;
+        }
+    </style>
 </head>
 <body>
 <section layout:fragment="content">
-    <div class="container mt-5">
-        <h2 class="mb-4">Sign Up</h2>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="card-title text-center mb-4">Sign Up</h2>
 
-        <!-- Εμφάνιση σφάλματος -->
-        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+                        <!-- Show general error message -->
+                        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
 
-        <form th:action="@{/register}" th:object="${userDto}" method="post">
-            <!-- Κοινά πεδία -->
-            <div class="mb-3">
-                <label>Username</label>
-                <input type="text" th:field="*{username}" class="form-control" required>
+                        <form th:action="@{/register}" th:object="${userDto}" method="post" onsubmit="return validateForm()">
+                            <!-- Show validation errors -->
+                            <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
+                                <p>Please correct the following errors:</p>
+                                <ul>
+                                    <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
+                                </ul>
+                            </div>
+
+                            <!-- Common fields -->
+                            <div class="mb-3">
+                                <label for="username">Username</label>
+                                <input type="text" th:field="*{username}" class="form-control" id="username" required
+                                       minlength="3" maxlength="50">
+                                <div th:if="${#fields.hasErrors('username')}" class="error-message" th:errors="*{username}"></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="email">Email</label>
+                                <input type="email" th:field="*{email}" class="form-control" id="email" required>
+                                <div th:if="${#fields.hasErrors('email')}" class="error-message" th:errors="*{email}"></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="password">Password</label>
+                                <input type="password" th:field="*{password}" class="form-control" id="password" required
+                                       minlength="6">
+                                <div th:if="${#fields.hasErrors('password')}" class="error-message" th:errors="*{password}"></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="role">Role</label>
+                                <select th:field="*{role}" class="form-select" id="role" onchange="showRoleFields()" required>
+                                    <option value="">-- Select Role --</option>
+                                    <option value="ROLE_TRAINEE">Student</option>
+                                    <option value="ROLE_COMPANY">Company</option>
+                                    <option value="ROLE_PROFESSOR">Professor</option>
+                                    <option value="ROLE_COMMITTEE">Committee</option>
+                                </select>
+                                <div th:if="${#fields.hasErrors('role')}" class="error-message" th:errors="*{role}"></div>
+                            </div>
+
+                            <!-- Trainee fields -->
+                            <div id="trainee-fields" class="role-fields" style="display: none;">
+                                <div class="mb-3">
+                                    <label for="traineeFullName">Full Name</label>
+                                    <input type="text" th:field="*{traineeFullName}" class="form-control" id="traineeFullName">
+                                    <div th:if="${#fields.hasErrors('traineeFullName')}" class="error-message" th:errors="*{traineeFullName}"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="studentId">Student ID</label>
+                                    <input type="text" th:field="*{studentId}" class="form-control" id="studentId">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="traineeSkills">Skills (comma-separated)</label>
+                                    <input type="text" th:field="*{traineeSkills}" class="form-control" id="traineeSkills">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="traineeInterests">Interests (comma-separated)</label>
+                                    <input type="text" th:field="*{traineeInterests}" class="form-control" id="traineeInterests">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="preferredLocation">Preferred Location</label>
+                                    <input type="text" th:field="*{preferredLocation}" class="form-control" id="preferredLocation">
+                                </div>
+                            </div>
+
+                            <!-- Company fields -->
+                            <div id="company-fields" class="role-fields" style="display: none;">
+                                <div class="mb-3">
+                                    <label for="companyName">Company Name</label>
+                                    <input type="text" th:field="*{companyName}" class="form-control" id="companyName">
+                                    <div th:if="${#fields.hasErrors('companyName')}" class="error-message" th:errors="*{companyName}"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="companyLocation">Location</label>
+                                    <input type="text" th:field="*{companyLocation}" class="form-control" id="companyLocation">
+                                </div>
+                            </div>
+
+                            <!-- Professor fields -->
+                            <div id="professor-fields" class="role-fields" style="display: none;">
+                                <div class="mb-3">
+                                    <label for="professorFullName">Full Name</label>
+                                    <input type="text" th:field="*{professorFullName}" class="form-control" id="professorFullName">
+                                    <div th:if="${#fields.hasErrors('professorFullName')}" class="error-message" th:errors="*{professorFullName}"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="professorInterests">Interests (comma-separated)</label>
+                                    <input type="text" th:field="*{professorInterests}" class="form-control" id="professorInterests">
+                                </div>
+                            </div>
+
+                            <!-- Committee fields -->
+                            <div id="committee-fields" class="role-fields" style="display: none;">
+                                <div class="mb-3">
+                                    <p>No extra information required.</p>
+                                </div>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary">Register</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
-
-            <div class="mb-3">
-                <label>Email</label>
-                <input type="email" th:field="*{email}" class="form-control" required>
-            </div>
-
-            <div class="mb-3">
-                <label>Password</label>
-                <input type="password" th:field="*{password}" class="form-control" required>
-            </div>
-
-            <div class="mb-3">
-                <label>Role</label>
-                <select th:field="*{role}" class="form-select" id="role" onchange="showRoleFields()" required>
-                    <option value="">-- Select Role --</option>
-                    <option value="TRAINEE">Student</option>
-                    <option value="COMPANY">Company</option>
-                    <option value="PROFESSOR">Professor</option>
-                    <option value="COMMITTEE">Committee</option>
-                </select>
-            </div>
-
-            <!-- Trainee fields -->
-            <div id="trainee-fields" class="role-fields" style="display: none;">
-                <div class="mb-3">
-                    <label>Full Name</label>
-                    <input type="text" th:field="*{traineeFullName}" class="form-control">
-                </div>
-                <div class="mb-3">
-                    <label>Student ID</label>
-                    <input type="text" th:field="*{studentId}" class="form-control">
-                </div>
-                <div class="mb-3">
-                    <label>Skills (comma-separated)</label>
-                    <input type="text" th:field="*{traineeSkills}" class="form-control">
-                </div>
-                <div class="mb-3">
-                    <label>Interests (comma-separated)</label>
-                    <input type="text" th:field="*{traineeInterests}" class="form-control">
-                </div>
-                <div class="mb-3">
-                    <label>Preferred Location</label>
-                    <input type="text" th:field="*{preferredLocation}" class="form-control">
-                </div>
-            </div>
-
-            <!-- Company fields -->
-            <div id="company-fields" class="role-fields" style="display: none;">
-                <div class="mb-3">
-                    <label>Company Name</label>
-                    <input type="text" th:field="*{companyName}" class="form-control">
-                </div>
-                <div class="mb-3">
-                    <label>Location</label>
-                    <input type="text" th:field="*{companyLocation}" class="form-control">
-                </div>
-            </div>
-
-            <!-- Professor fields -->
-            <div id="professor-fields" class="role-fields" style="display: none;">
-                <div class="mb-3">
-                    <label>Full Name</label>
-                    <input type="text" th:field="*{professorFullName}" class="form-control">
-                </div>
-                <div class="mb-3">
-                    <label>Interests (comma-separated)</label>
-                    <input type="text" th:field="*{professorInterests}" class="form-control">
-                </div>
-            </div>
-
-            <!-- Committee fields -->
-            <div id="committee-fields" class="role-fields" style="display: none;">
-                <div class="mb-3">
-                    <p>No extra information required.</p>
-                </div>
-            </div>
-
-            <button type="submit" class="btn btn-primary">Register</button>
-        </form>
+        </div>
     </div>
 </section>
 </body>

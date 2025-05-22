@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+    <title>Edit Evaluation</title>
+    <style>
+        .rating-group {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+        }
+        .rating-group input[type="radio"] {
+            display: none;
+        }
+        .rating-group label {
+            cursor: pointer;
+            padding: 5px;
+            font-size: 1.5em;
+            color: #ddd;
+        }
+        .rating-group label:hover,
+        .rating-group label:hover ~ label,
+        .rating-group input[type="radio"]:checked ~ label {
+            color: #ffd700;
+        }
+    </style>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title mb-0">Edit Evaluation</h2>
+                    </div>
+                    <div class="card-body">
+                        <!-- Traineeship Info -->
+                        <div class="mb-4">
+                            <h5>Traineeship Details</h5>
+                            <p class="mb-1">
+                                <strong>Trainee:</strong> <span th:text="${evaluation.traineeName}">John Doe</span>
+                            </p>
+                            <p class="mb-0">
+                                <strong>Company:</strong> <span th:text="${evaluation.companyName}">Company Name</span>
+                            </p>
+                        </div>
+
+                        <form th:action="@{/evaluations/edit/{id}(id=${evaluation.id})}" 
+                              th:object="${evaluation}" method="post">
+                            <input type="hidden" th:field="*{evaluatorType}">
+
+                            <!-- Motivation Rating -->
+                            <div class="mb-4">
+                                <label class="form-label">Motivation</label>
+                                <div class="rating-group">
+                                    <input type="radio" th:field="*{motivation}" value="5" id="motivation-5" required>
+                                    <label for="motivation-5">★</label>
+                                    <input type="radio" th:field="*{motivation}" value="4" id="motivation-4">
+                                    <label for="motivation-4">★</label>
+                                    <input type="radio" th:field="*{motivation}" value="3" id="motivation-3">
+                                    <label for="motivation-3">★</label>
+                                    <input type="radio" th:field="*{motivation}" value="2" id="motivation-2">
+                                    <label for="motivation-2">★</label>
+                                    <input type="radio" th:field="*{motivation}" value="1" id="motivation-1">
+                                    <label for="motivation-1">★</label>
+                                </div>
+                                <small class="form-text text-muted">Rate the trainee's enthusiasm and dedication to work</small>
+                            </div>
+
+                            <!-- Effectiveness Rating -->
+                            <div class="mb-4">
+                                <label class="form-label">Effectiveness</label>
+                                <div class="rating-group">
+                                    <input type="radio" th:field="*{effectiveness}" value="5" id="effectiveness-5" required>
+                                    <label for="effectiveness-5">★</label>
+                                    <input type="radio" th:field="*{effectiveness}" value="4" id="effectiveness-4">
+                                    <label for="effectiveness-4">★</label>
+                                    <input type="radio" th:field="*{effectiveness}" value="3" id="effectiveness-3">
+                                    <label for="effectiveness-3">★</label>
+                                    <input type="radio" th:field="*{effectiveness}" value="2" id="effectiveness-2">
+                                    <label for="effectiveness-2">★</label>
+                                    <input type="radio" th:field="*{effectiveness}" value="1" id="effectiveness-1">
+                                    <label for="effectiveness-1">★</label>
+                                </div>
+                                <small class="form-text text-muted">Rate the quality of work and goal achievement</small>
+                            </div>
+
+                            <!-- Efficiency Rating -->
+                            <div class="mb-4">
+                                <label class="form-label">Efficiency</label>
+                                <div class="rating-group">
+                                    <input type="radio" th:field="*{efficiency}" value="5" id="efficiency-5" required>
+                                    <label for="efficiency-5">★</label>
+                                    <input type="radio" th:field="*{efficiency}" value="4" id="efficiency-4">
+                                    <label for="efficiency-4">★</label>
+                                    <input type="radio" th:field="*{efficiency}" value="3" id="efficiency-3">
+                                    <label for="efficiency-3">★</label>
+                                    <input type="radio" th:field="*{efficiency}" value="2" id="efficiency-2">
+                                    <label for="efficiency-2">★</label>
+                                    <input type="radio" th:field="*{efficiency}" value="1" id="efficiency-1">
+                                    <label for="efficiency-1">★</label>
+                                </div>
+                                <small class="form-text text-muted">Rate time management and resource utilization</small>
+                            </div>
+
+                            <!-- Facilities Rating -->
+                            <div class="mb-4">
+                                <label class="form-label">Facilities</label>
+                                <div class="rating-group">
+                                    <input type="radio" th:field="*{facilities}" value="5" id="facilities-5" required>
+                                    <label for="facilities-5">★</label>
+                                    <input type="radio" th:field="*{facilities}" value="4" id="facilities-4">
+                                    <label for="facilities-4">★</label>
+                                    <input type="radio" th:field="*{facilities}" value="3" id="facilities-3">
+                                    <label for="facilities-3">★</label>
+                                    <input type="radio" th:field="*{facilities}" value="2" id="facilities-2">
+                                    <label for="facilities-2">★</label>
+                                    <input type="radio" th:field="*{facilities}" value="1" id="facilities-1">
+                                    <label for="facilities-1">★</label>
+                                </div>
+                                <small class="form-text text-muted">Rate the workspace and resources provided</small>
+                            </div>
+
+                            <!-- Guidance Rating -->
+                            <div class="mb-4">
+                                <label class="form-label">Guidance</label>
+                                <div class="rating-group">
+                                    <input type="radio" th:field="*{guidance}" value="5" id="guidance-5" required>
+                                    <label for="guidance-5">★</label>
+                                    <input type="radio" th:field="*{guidance}" value="4" id="guidance-4">
+                                    <label for="guidance-4">★</label>
+                                    <input type="radio" th:field="*{guidance}" value="3" id="guidance-3">
+                                    <label for="guidance-3">★</label>
+                                    <input type="radio" th:field="*{guidance}" value="2" id="guidance-2">
+                                    <label for="guidance-2">★</label>
+                                    <input type="radio" th:field="*{guidance}" value="1" id="guidance-1">
+                                    <label for="guidance-1">★</label>
+                                </div>
+                                <small class="form-text text-muted">Rate the quality of support and mentorship</small>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary">Update Evaluation</button>
+                                <a th:href="@{/evaluations}" class="btn btn-outline-secondary">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html> 

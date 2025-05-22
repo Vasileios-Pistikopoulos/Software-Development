@@ -1,13 +1,240 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{base}">
 <head>
     <title>Home</title>
+    <style>
+        .dashboard-card {
+            transition: transform 0.2s;
+        }
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+        }
+        .stat-card {
+            border-left: 4px solid #0d6efd;
+        }
+    </style>
 </head>
 <body>
 <section layout:fragment="content">
-    <h1>Welcome to Home!</h1>
+    <div class="container">
+        <!-- Welcome Message -->
+        <div class="jumbotron bg-light p-5 rounded mb-4">
+            <h1 class="display-4">Welcome to Traineeship Management</h1>
+            <p class="lead">Connecting students with great opportunities.</p>
+            <hr class="my-4">
+            <div sec:authorize="!isAuthenticated()">
+                <p>Join our platform to start your journey.</p>
+                <a class="btn btn-primary btn-lg" th:href="@{/register}" role="button">Get Started</a>
+            </div>
+        </div>
+
+        <!-- Trainee Dashboard -->
+        <div sec:authorize="hasRole('ROLE_TRAINEE')" class="row g-4">
+            <h2 class="mb-4">Student Dashboard</h2>
+            
+            <!-- Quick Stats -->
+            <div class="col-md-4">
+                <div class="card stat-card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Active Applications</h5>
+                        <p class="card-text display-6" th:text="${activeApplications ?: 0}">0</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card stat-card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Logbook Entries</h5>
+                        <p class="card-text display-6" th:text="${logbookEntries ?: 0}">0</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card stat-card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Active Traineeship</h5>
+                        <p class="card-text" th:text="${activeTraineeship?.company?.companyName ?: 'None'}">None</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Cards -->
+            <div class="col-md-6">
+                <div class="card dashboard-card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Find Traineeships</h5>
+                        <p class="card-text">Browse available positions matching your skills and interests.</p>
+                        <a th:href="@{/traineeships}" class="btn btn-primary">Browse Positions</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card dashboard-card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Manage Logbook</h5>
+                        <p class="card-text">Record your daily activities and progress.</p>
+                        <a th:href="@{/logbook}" class="btn btn-primary">View Logbook</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Company Dashboard -->
+        <div sec:authorize="hasRole('ROLE_COMPANY')" class="row g-4">
+            <h2 class="mb-4">Company Dashboard</h2>
+            
+            <!-- Quick Stats -->
+            <div class="col-md-4">
+                <div class="card stat-card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Active Positions</h5>
+                        <p class="card-text display-6" th:text="${activePositions ?: 0}">0</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card stat-card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Current Trainees</h5>
+                        <p class="card-text display-6" th:text="${currentTrainees ?: 0}">0</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card stat-card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Pending Applications</h5>
+                        <p class="card-text display-6" th:text="${pendingApplications ?: 0}">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Cards -->
+            <div class="col-md-6">
+                <div class="card dashboard-card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Manage Positions</h5>
+                        <p class="card-text">Create and manage traineeship positions.</p>
+                        <a th:href="@{/company/positions}" class="btn btn-primary">View Positions</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card dashboard-card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Review Applications</h5>
+                        <p class="card-text">Review and respond to traineeship applications.</p>
+                        <a th:href="@{/company/applications}" class="btn btn-primary">View Applications</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Professor Dashboard -->
+        <div sec:authorize="hasRole('ROLE_PROFESSOR')" class="row g-4">
+            <h2 class="mb-4">Professor Dashboard</h2>
+            
+            <!-- Quick Stats -->
+            <div class="col-md-4">
+                <div class="card stat-card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Supervised Traineeships</h5>
+                        <p class="card-text display-6" th:text="${supervisedTraineeships ?: 0}">0</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card stat-card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Pending Evaluations</h5>
+                        <p class="card-text display-6" th:text="${pendingEvaluations ?: 0}">0</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card stat-card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Active Students</h5>
+                        <p class="card-text display-6" th:text="${activeStudents ?: 0}">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Cards -->
+            <div class="col-md-6">
+                <div class="card dashboard-card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Monitor Traineeships</h5>
+                        <p class="card-text">Review progress of supervised traineeships.</p>
+                        <a th:href="@{/professor/traineeships}" class="btn btn-primary">View Traineeships</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card dashboard-card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Submit Evaluations</h5>
+                        <p class="card-text">Evaluate trainees and companies.</p>
+                        <a th:href="@{/professor/evaluations}" class="btn btn-primary">Manage Evaluations</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Committee Dashboard -->
+        <div sec:authorize="hasRole('ROLE_COMMITTEE')" class="row g-4">
+            <h2 class="mb-4">Committee Dashboard</h2>
+            
+            <!-- Quick Stats -->
+            <div class="col-md-4">
+                <div class="card stat-card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Pending Reviews</h5>
+                        <p class="card-text display-6" th:text="${pendingReviews ?: 0}">0</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card stat-card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Active Traineeships</h5>
+                        <p class="card-text display-6" th:text="${totalActiveTraineeships ?: 0}">0</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card stat-card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Registered Companies</h5>
+                        <p class="card-text display-6" th:text="${registeredCompanies ?: 0}">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Cards -->
+            <div class="col-md-6">
+                <div class="card dashboard-card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Review Applications</h5>
+                        <p class="card-text">Review and approve traineeship applications.</p>
+                        <a th:href="@{/committee/applications}" class="btn btn-primary">Review Applications</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card dashboard-card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">System Overview</h5>
+                        <p class="card-text">Monitor overall system statistics and reports.</p>
+                        <a th:href="@{/committee/overview}" class="btn btn-primary">View Overview</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </section>
 </body>
 </html>

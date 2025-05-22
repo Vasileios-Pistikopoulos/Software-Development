@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+    <title>Traineeship Details</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="container">
+        <!-- Alert Messages -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${success}">Success message</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${error}">Error message</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Back Button -->
+        <div class="mb-4">
+            <a th:href="@{/traineeships}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Listings
+            </a>
+        </div>
+
+        <!-- Traineeship Details -->
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-4">
+                    <div>
+                        <h2 class="card-title mb-1" th:text="${traineeship.company.name}">Company Name</h2>
+                        <p class="text-muted mb-0" th:text="${traineeship.location}">Location</p>
+                    </div>
+                    <div sec:authorize="hasRole('ROLE_TRAINEE')" th:if="${!traineeship.assigned}">
+                        <form th:if="${!hasApplied}" th:action="@{/traineeships/{id}/apply(id=${traineeship.id})}" 
+                              method="post" style="display: inline;">
+                            <button type="submit" class="btn btn-primary">Apply Now</button>
+                        </form>
+                        <span th:if="${hasApplied}" class="badge bg-success">Application Submitted</span>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h5>Duration</h5>
+                        <p>
+                            From: <span th:text="${#temporals.format(traineeship.startDate, 'dd/MM/yyyy')}">01/01/2024</span><br>
+                            To: <span th:text="${#temporals.format(traineeship.endDate, 'dd/MM/yyyy')}">30/06/2024</span>
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Status</h5>
+                        <p>
+                            <span th:if="${traineeship.assigned}" class="badge bg-warning">Position Filled</span>
+                            <span th:unless="${traineeship.assigned}" class="badge bg-success">Open</span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <h5>Description</h5>
+                    <p th:text="${traineeship.description}">Description text here...</p>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h5>Required Skills</h5>
+                        <div>
+                            <span th:each="skill : ${traineeship.skillsRequired}" 
+                                  class="badge bg-primary me-1 mb-1" th:text="${skill}">Skill</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Topics</h5>
+                        <div>
+                            <span th:each="topic : ${traineeship.topics}" 
+                                  class="badge bg-info me-1 mb-1" th:text="${topic}">Topic</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Supervisor Info (if assigned) -->
+                <div th:if="${traineeship.supervisorId != null}" class="mb-4">
+                    <h5>Academic Supervisor</h5>
+                    <p th:text="${traineeship.supervisorName}">Professor Name</p>
+                </div>
+
+                <!-- Assigned Trainee Info (if any) -->
+                <div th:if="${traineeship.assigned}" class="mb-4">
+                    <h5>Assigned Trainee</h5>
+                    <p th:text="${traineeship.assignedTraineeName}">Student Name</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html> 

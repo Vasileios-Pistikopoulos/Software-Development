@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+    <title>Create Traineeship</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title mb-0">Create New Traineeship Position</h2>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/traineeships/create}" th:object="${traineeshipDto}" method="post">
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea class="form-control" id="description" th:field="*{description}" 
+                                          rows="4" required></textarea>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="startDate" class="form-label">Start Date</label>
+                                    <input type="date" class="form-control" id="startDate" 
+                                           th:field="*{startDate}" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="endDate" class="form-label">End Date</label>
+                                    <input type="date" class="form-control" id="endDate" 
+                                           th:field="*{endDate}" required>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="location" class="form-label">Location</label>
+                                <input type="text" class="form-control" id="location" 
+                                       th:field="*{location}" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="skillsRequired" class="form-label">Required Skills (comma-separated)</label>
+                                <input type="text" class="form-control" id="skillsRequired" 
+                                       name="skillsRequired" placeholder="e.g. Java, Spring, MySQL">
+                                <small class="form-text text-muted">Enter skills separated by commas</small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="topics" class="form-label">Topics (comma-separated)</label>
+                                <input type="text" class="form-control" id="topics" 
+                                       name="topics" placeholder="e.g. Web Development, Database Design">
+                                <small class="form-text text-muted">Enter topics separated by commas</small>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary">Create Position</button>
+                                <a th:href="@{/traineeships}" class="btn btn-outline-secondary">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html> 

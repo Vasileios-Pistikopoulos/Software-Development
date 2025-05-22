@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+    <title>Evaluations</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="container">
+        <!-- Alert Messages -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${success}">Success message</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${error}">Error message</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <h2 class="mb-4">Trainee Evaluations</h2>
+
+        <!-- Evaluations List -->
+        <div class="card">
+            <div class="card-body">
+                <div th:if="${not #lists.isEmpty(evaluations)}">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Trainee</th>
+                                    <th>Company</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="evaluation : ${evaluations}">
+                                    <td th:text="${evaluation.traineeName}">John Doe</td>
+                                    <td th:text="${evaluation.companyName}">Company Name</td>
+                                    <td>
+                                        <span th:if="${evaluation.id != null}" class="badge bg-success">Evaluated</span>
+                                        <span th:unless="${evaluation.id != null}" class="badge bg-warning">Pending</span>
+                                    </td>
+                                    <td>
+                                        <div th:if="${evaluation.id != null}">
+                                            <a th:href="@{/evaluations/edit/{id}(id=${evaluation.id})}" 
+                                               class="btn btn-sm btn-outline-primary">Edit Evaluation</a>
+                                        </div>
+                                        <div th:unless="${evaluation.id != null}">
+                                            <a th:href="@{/evaluations/create/{id}(id=${evaluation.traineeshipId})}" 
+                                               class="btn btn-sm btn-primary">Submit Evaluation</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div th:if="${#lists.isEmpty(evaluations)}" class="text-center py-4">
+                    <p class="text-muted mb-0">No traineeships found requiring evaluation.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Evaluation Guide -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Evaluation Guide</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Rating Scale</h6>
+                        <ul class="list-unstyled">
+                            <li>1 - Poor</li>
+                            <li>2 - Below Average</li>
+                            <li>3 - Average</li>
+                            <li>4 - Good</li>
+                            <li>5 - Excellent</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Evaluation Criteria</h6>
+                        <ul class="list-unstyled">
+                            <li><strong>Motivation:</strong> Enthusiasm and dedication to work</li>
+                            <li><strong>Effectiveness:</strong> Quality of work and goal achievement</li>
+                            <li><strong>Efficiency:</strong> Time management and resource utilization</li>
+                            <li><strong>Facilities:</strong> Workspace and resources provided</li>
+                            <li><strong>Guidance:</strong> Support and mentorship quality</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html> 

@@ -1,6 +1,10 @@
 package _5336_4701_5281.swdeproj.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Objects;
 
 @Entity
@@ -11,17 +15,31 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @NotBlank(message = "Username is required")
+    @Column(unique = true)
     private String username;
 
-    @Column(nullable = false, unique = true)
-    private String email;
-
-    @Column(nullable = false)
+    @NotBlank(message = "Password is required")
     private String password;
 
-    @Column(nullable = false)
-    private String role;  // TRAINEE, COMPANY, PROFESSOR, COMMITTEE
+    @NotBlank(message = "Email is required")
+    @Email(message = "Please provide a valid email address")
+    @Column(unique = true)
+    private String email;
+
+    @NotBlank(message = "Full name is required")
+    private String fullName;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    @Enumerated(EnumType.STRING)
+    private Set<Role> roles = new HashSet<>();
+
+    @OneToMany(mappedBy = "trainee")
+    private Set<LogbookEntry> logbookEntries = new HashSet<>();
+
+    @OneToMany(mappedBy = "evaluator")
+    private Set<Evaluation> evaluations = new HashSet<>();
 
     // === Συσχετίσεις με τα προφίλ ===
 
@@ -32,10 +50,20 @@ public class User {
     private CompanyProfile companyProfile;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Company company;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private ProfessorProfile professorProfile;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private CommitteeProfile committeeProfile;
+
+    public enum Role {
+        ROLE_TRAINEE,
+        ROLE_COMPANY,
+        ROLE_PROFESSOR,
+        ROLE_COMMITTEE
+    }
 
     // === Constructors ===
 
@@ -45,7 +73,7 @@ public class User {
         this.username = username;
         this.email = email;
         this.password = password;
-        this.role = role;
+        this.roles.add(Role.valueOf(role));
     }
 
     // === Getters & Setters ===
@@ -61,8 +89,15 @@ public class User {
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
 
-    public String getRole() { return role; }
-    public void setRole(String role) { this.role = role; }
+    public String getFullName() { return fullName; }
+    public void setFullName(String fullName) { this.fullName = fullName; }
+
+    public Set<Role> getRoles() { return roles; }
+    public void setRoles(Set<Role> roles) { this.roles = roles; }
+
+    public void addRole(Role role) { roles.add(role); }
+
+    public boolean hasRole(Role role) { return roles.contains(role); }
 
     public TraineeProfile getTraineeProfile() { return traineeProfile; }
     public void setTraineeProfile(TraineeProfile traineeProfile) {
@@ -73,7 +108,25 @@ public class User {
     public CompanyProfile getCompanyProfile() { return companyProfile; }
     public void setCompanyProfile(CompanyProfile companyProfile) {
         this.companyProfile = companyProfile;
-        if (companyProfile != null) companyProfile.setUser(this);
+        if (companyProfile != null) {
+            companyProfile.setUser(this);
+            if (this.company != null) {
+                companyProfile.setCompany(this.company);
+                this.company.setProfile(companyProfile);
+            }
+        }
+    }
+
+    public Company getCompany() { return company; }
+    public void setCompany(Company company) {
+        this.company = company;
+        if (company != null) {
+            company.setUser(this);
+            if (this.companyProfile != null) {
+                this.companyProfile.setCompany(company);
+                company.setProfile(this.companyProfile);
+            }
+        }
     }
 
     public ProfessorProfile getProfessorProfile() { return professorProfile; }
@@ -88,7 +141,17 @@ public class User {
         if (committeeProfile != null) committeeProfile.setUser(this);
     }
 
-    // === equals & hashCode ===
+    public Set<LogbookEntry> getLogbookEntries() { return logbookEntries; }
+    public void setLogbookEntries(Set<LogbookEntry> logbookEntries) { this.logbookEntries = logbookEntries; }
+
+    public Set<Evaluation> getEvaluations() { return evaluations; }
+    public void setEvaluations(Set<Evaluation> evaluations) { this.evaluations = evaluations; }
+
+    public String getRole() {
+        return roles.stream().findFirst()
+                .map(role -> role.name().substring(5))
+                .orElse(null);
+    }
 
     @Override
     public boolean equals(Object o) {

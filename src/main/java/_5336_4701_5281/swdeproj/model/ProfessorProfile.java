@@ -24,6 +24,9 @@ public class ProfessorProfile {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @OneToMany(mappedBy = "supervisor")
+    private List<Traineeship> supervisedTraineeships;
+
     // === Constructors ===
 
     public ProfessorProfile() {}
@@ -45,6 +48,9 @@ public class ProfessorProfile {
 
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }
+
+    public List<Traineeship> getSupervisedTraineeships() { return supervisedTraineeships; }
+    public void setSupervisedTraineeships(List<Traineeship> supervisedTraineeships) { this.supervisedTraineeships = supervisedTraineeships; }
 
     // === equals & hashCode ===
 

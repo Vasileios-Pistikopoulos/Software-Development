@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+    <title>Traineeships</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Available Traineeships</h2>
+            <div sec:authorize="hasRole('ROLE_COMPANY')">
+                <a th:href="@{/traineeships/create}" class="btn btn-primary">Create New Position</a>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <form th:action="@{/traineeships}" method="get" class="row g-3">
+                    <div class="col-md-4">
+                        <label for="location" class="form-label">Location</label>
+                        <input type="text" class="form-control" id="location" name="location" 
+                               th:value="${location}">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="skill" class="form-label">Required Skill</label>
+                        <input type="text" class="form-control" id="skill" name="skill" 
+                               th:value="${skill}">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="topic" class="form-label">Topic</label>
+                        <input type="text" class="form-control" id="topic" name="topic" 
+                               th:value="${topic}">
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary">Filter</button>
+                        <a th:href="@{/traineeships}" class="btn btn-outline-secondary">Clear Filters</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Traineeships List -->
+        <div class="row g-4">
+            <div th:each="traineeship : ${traineeships}" class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${traineeship.companyName}">Company Name</h5>
+                        <h6 class="card-subtitle mb-2 text-muted" th:text="${traineeship.location}">Location</h6>
+                        
+                        <p class="card-text" th:text="${traineeship.description}">Description</p>
+                        
+                        <div class="mb-3">
+                            <strong>Required Skills:</strong>
+                            <span th:each="skill : ${traineeship.skillsRequired}" 
+                                  class="badge bg-primary me-1" th:text="${skill}">Skill</span>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <strong>Topics:</strong>
+                            <span th:each="topic : ${traineeship.topics}" 
+                                  class="badge bg-info me-1" th:text="${topic}">Topic</span>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <small class="text-muted">
+                                    Start Date: <span th:text="${#temporals.format(traineeship.startDate, 'dd/MM/yyyy')}">01/01/2024</span>
+                                </small>
+                            </div>
+                            <a th:href="@{/traineeships/{id}(id=${traineeship.id})}" 
+                               class="btn btn-outline-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Empty State -->
+            <div th:if="${#lists.isEmpty(traineeships)}" class="col-12 text-center">
+                <div class="alert alert-info">
+                    No traineeships found matching your criteria.
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html> 

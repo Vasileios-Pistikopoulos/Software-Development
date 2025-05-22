@@ -5,16 +5,21 @@ import _5336_4701_5281.swdeproj.model.*;
 import _5336_4701_5281.swdeproj.repository.*;
 import _5336_4701_5281.swdeproj.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
 
 @Controller
 public class UserController {
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     private final UserRepository userRepository;
     private final TraineeProfileRepository traineeRepo;
@@ -39,74 +44,146 @@ public class UserController {
 
     @GetMapping("/login")
     public String showLoginPage() {
+        logger.info("Accessing login page");
         return "login";
     }
 
     @GetMapping("/register")
     public String showRegistrationForm(Model model) {
+        logger.info("Accessing registration page - GET /register");
         model.addAttribute("userDto", new UserRegistrationDto());
+        logger.info("Returning signup view");
         return "signup";
     }
 
     @PostMapping("/register")
     @Transactional
-    public String registerUser(@ModelAttribute("userDto") UserRegistrationDto dto, Model model) {
-        if (userRepository.findByUsername(dto.getUsername()).isPresent()) {
-            model.addAttribute("error", "Username already exists");
-            return "signup";
-        }
-
-        User user = new User(
-                dto.getUsername(),
-                dto.getEmail(),
-                passwordEncoder.encode(dto.getPassword()),
-                dto.getRole()
-        );
-
-        switch (dto.getRole()) {
-            case "TRAINEE" -> {
-                TraineeProfile profile = new TraineeProfile();
-                profile.setFullName(dto.getTraineeFullName());
-                profile.setStudentId(dto.getStudentId());
-                profile.setSkills(splitAndTrim(dto.getTraineeSkills()));
-                profile.setInterests(splitAndTrim(dto.getTraineeInterests()));
-                profile.setPreferredLocation(dto.getPreferredLocation());
-
-                // σύνδεση
-                profile.setUser(user);
-                user.setTraineeProfile(profile);
-            }
-            case "COMPANY" -> {
-                CompanyProfile profile = new CompanyProfile();
-                profile.setCompanyName(dto.getCompanyName());
-                profile.setLocation(dto.getCompanyLocation());
-
-                profile.setUser(user);
-                user.setCompanyProfile(profile);
-            }
-            case "PROFESSOR" -> {
-                ProfessorProfile profile = new ProfessorProfile();
-                profile.setFullName(dto.getProfessorFullName());
-                profile.setInterests(splitAndTrim(dto.getProfessorInterests()));
-
-                profile.setUser(user);
-                user.setProfessorProfile(profile);
-            }
-            case "COMMITTEE" -> {
-                CommitteeProfile profile = new CommitteeProfile();
-                profile.setUser(user);
-                user.setCommitteeProfile(profile);
-            }
-            default -> {
-                model.addAttribute("error", "Invalid role selected");
+    public String registerUser(@Valid @ModelAttribute("userDto") UserRegistrationDto dto, 
+                             BindingResult result, 
+                             Model model) {
+        try {
+            logger.info("Starting registration process - POST /register");
+            logger.info("Received registration request for username: {}", dto.getUsername());
+            logger.info("Role selected: {}", dto.getRole());
+            
+            if (result.hasErrors()) {
+                logger.error("Validation errors during registration: {}", result.getAllErrors());
                 return "signup";
             }
-        }
 
-        userRepository.save(user);  // ΟΛΑ σώζονται εδώ λόγω cascade
-        return "redirect:/login";
+            if (userRepository.findByUsername(dto.getUsername()).isPresent()) {
+                logger.warn("Registration failed - Username already exists: {}", dto.getUsername());
+                model.addAttribute("error", "Username already exists");
+                return "signup";
+            }
+
+            logger.info("Creating new user with role: {}", dto.getRole());
+            logger.info("Incoming role string: {}", dto.getRole());
+            
+            User user = new User();
+            user.setUsername(dto.getUsername());
+            user.setEmail(dto.getEmail());
+            user.setPassword(passwordEncoder.encode(dto.getPassword()));
+            user.addRole(User.Role.valueOf(dto.getRole()));
+
+            switch (dto.getRole()) {
+                case "ROLE_TRAINEE" -> {
+                    logger.info("Setting up trainee profile for user: {}", dto.getUsername());
+                    if (dto.getTraineeFullName() == null || dto.getTraineeFullName().isBlank()) {
+                        logger.warn("Registration failed - Full name missing for trainee");
+                        model.addAttribute("error", "Full name is required for trainees");
+                        return "signup";
+                    }
+                    user.setFullName(dto.getTraineeFullName());
+                    TraineeProfile profile = new TraineeProfile();
+                    profile.setFullName(dto.getTraineeFullName());
+                    profile.setStudentId(dto.getStudentId());
+                    profile.setSkills(splitAndTrim(dto.getTraineeSkills()));
+                    profile.setInterests(splitAndTrim(dto.getTraineeInterests()));
+                    profile.setPreferredLocation(dto.getPreferredLocation());
+
+                    profile.setUser(user);
+                    user.setTraineeProfile(profile);
+                }
+                case "ROLE_COMPANY" -> {
+                    logger.info("Setting up company profile for user: {}", dto.getUsername());
+                    if (dto.getCompanyName() == null || dto.getCompanyName().isBlank()) {
+                        logger.warn("Registration failed - Company name missing");
+                        model.addAttribute("error", "Company name is required");
+                        return "signup";
+                    }
+                    user.setFullName(dto.getCompanyName());
+                    CompanyProfile profile = new CompanyProfile();
+                    profile.setCompanyName(dto.getCompanyName());
+                    profile.setLocation(dto.getCompanyLocation());
+
+                    profile.setUser(user);
+                    user.setCompanyProfile(profile);
+                }
+                case "ROLE_PROFESSOR" -> {
+                    logger.info("Setting up professor profile for user: {}", dto.getUsername());
+                    if (dto.getProfessorFullName() == null || dto.getProfessorFullName().isBlank()) {
+                        logger.warn("Registration failed - Full name missing for professor");
+                        model.addAttribute("error", "Full name is required for professors");
+                        return "signup";
+                    }
+                    user.setFullName(dto.getProfessorFullName());
+                    ProfessorProfile profile = new ProfessorProfile();
+                    profile.setFullName(dto.getProfessorFullName());
+                    profile.setInterests(splitAndTrim(dto.getProfessorInterests()));
+
+                    profile.setUser(user);
+                    user.setProfessorProfile(profile);
+                }
+                case "ROLE_COMMITTEE" -> {
+                    logger.info("Setting up committee profile for user: {}", dto.getUsername());
+                    user.setFullName("Committee Member");
+                    CommitteeProfile profile = new CommitteeProfile();
+                    profile.setUser(user);
+                    user.setCommitteeProfile(profile);
+                }
+                default -> {
+                    logger.error("Registration failed - Invalid role selected: {}", dto.getRole());
+                    model.addAttribute("error", "Invalid role selected");
+                    return "signup";
+                }
+            }
+
+            logger.info("Attempting to save user to database: {}", dto.getUsername());
+            try {
+                userRepository.save(user);
+                logger.info("User saved successfully to database: {}", dto.getUsername());
+            } catch (Exception e) {
+                logger.error("Failed to save user to database: " + e.getMessage(), e);
+                model.addAttribute("error", "Could not save user: " + e.getMessage());
+                return "signup";
+            }
+
+            logger.info("User registration completed successfully for: {}", dto.getUsername());
+            return "redirect:/login?registered=true";
+            
+        } catch (Exception e) {
+            logger.error("Error during user registration for username: " + dto.getUsername(), e);
+            model.addAttribute("error", "An error occurred during registration: " + e.getMessage());
+            return "signup";
+        }
     }
 
+    @GetMapping("/test-register")
+    @Transactional
+    public String testRegister() {
+        try {
+            logger.info("Testing basic user registration");
+            User user = new User("tester", "tester@mail.com", passwordEncoder.encode("123456"), "ROLE_TRAINEE");
+            user.setFullName("Tester Trainee");
+            userRepository.save(user);
+            logger.info("Test user saved successfully");
+            return "redirect:/login?test=true";
+        } catch (Exception e) {
+            logger.error("Test registration failed: " + e.getMessage(), e);
+            return "redirect:/login?error=test-failed";
+        }
+    }
 
     private List<String> splitAndTrim(String input) {
         if (input == null || input.isBlank()) return List.of();

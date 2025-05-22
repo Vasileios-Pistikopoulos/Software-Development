@@ -34,6 +34,12 @@ public class TraineeProfile {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @OneToMany(mappedBy = "trainee", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Application> applications;
+
+    @OneToMany(mappedBy = "assignedTrainee")
+    private List<Traineeship> assignedTraineeships;
+
     // === Constructors ===
 
     public TraineeProfile() {}
@@ -67,6 +73,12 @@ public class TraineeProfile {
 
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }
+
+    public List<Application> getApplications() { return applications; }
+    public void setApplications(List<Application> applications) { this.applications = applications; }
+
+    public List<Traineeship> getAssignedTraineeships() { return assignedTraineeships; }
+    public void setAssignedTraineeships(List<Traineeship> assignedTraineeships) { this.assignedTraineeships = assignedTraineeships; }
 
     // === equals & hashCode ===
 
