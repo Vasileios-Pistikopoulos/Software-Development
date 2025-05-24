@@ -25,6 +25,7 @@
             
             // Clear previous error messages
             document.querySelectorAll('.error-message').forEach(el => el.remove());
+            document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
             
             let isValid = true;
 
@@ -44,6 +45,12 @@
             // Password validation
             if (password.length < 6) {
                 showError("password", "Password must be at least 6 characters long");
+                isValid = false;
+            }
+
+            // Role validation
+            if (!role) {
+                showError("role", "Please select a role");
                 isValid = false;
             }
 
@@ -94,6 +101,9 @@
         .is-invalid {
             border-color: #dc3545;
         }
+        .alert {
+            margin-bottom: 1rem;
+        }
     </style>
 </head>
 <body>
@@ -109,68 +119,77 @@
                         <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
 
                         <form th:action="@{/register}" th:object="${userDto}" method="post" onsubmit="return validateForm()">
-                            <!-- Show validation errors -->
-                            <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
-                                <p>Please correct the following errors:</p>
-                                <ul>
-                                    <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
-                                </ul>
-                            </div>
-
                             <!-- Common fields -->
                             <div class="mb-3">
-                                <label for="username">Username</label>
-                                <input type="text" th:field="*{username}" class="form-control" id="username" required
-                                       minlength="3" maxlength="50">
-                                <div th:if="${#fields.hasErrors('username')}" class="error-message" th:errors="*{username}"></div>
+                                <label for="username" class="form-label">Username</label>
+                                <input type="text" th:field="*{username}" class="form-control" 
+                                       th:classappend="${#fields.hasErrors('username')} ? 'is-invalid'" 
+                                       id="username" required minlength="3" maxlength="50">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('username')}" 
+                                     th:errors="*{username}"></div>
                             </div>
 
                             <div class="mb-3">
-                                <label for="email">Email</label>
-                                <input type="email" th:field="*{email}" class="form-control" id="email" required>
-                                <div th:if="${#fields.hasErrors('email')}" class="error-message" th:errors="*{email}"></div>
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" th:field="*{email}" class="form-control" 
+                                       th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'" 
+                                       id="email" required>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" 
+                                     th:errors="*{email}"></div>
                             </div>
 
                             <div class="mb-3">
-                                <label for="password">Password</label>
-                                <input type="password" th:field="*{password}" class="form-control" id="password" required
-                                       minlength="6">
-                                <div th:if="${#fields.hasErrors('password')}" class="error-message" th:errors="*{password}"></div>
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" th:field="*{password}" class="form-control" 
+                                       th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'" 
+                                       id="password" required minlength="6">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}" 
+                                     th:errors="*{password}"></div>
                             </div>
 
                             <div class="mb-3">
-                                <label for="role">Role</label>
-                                <select th:field="*{role}" class="form-select" id="role" onchange="showRoleFields()" required>
+                                <label for="role" class="form-label">Role</label>
+                                <select th:field="*{role}" class="form-select" 
+                                        th:classappend="${#fields.hasErrors('role')} ? 'is-invalid'" 
+                                        id="role" onchange="showRoleFields()" required>
                                     <option value="">-- Select Role --</option>
                                     <option value="ROLE_TRAINEE">Student</option>
                                     <option value="ROLE_COMPANY">Company</option>
                                     <option value="ROLE_PROFESSOR">Professor</option>
                                     <option value="ROLE_COMMITTEE">Committee</option>
                                 </select>
-                                <div th:if="${#fields.hasErrors('role')}" class="error-message" th:errors="*{role}"></div>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('role')}" 
+                                     th:errors="*{role}"></div>
                             </div>
 
                             <!-- Trainee fields -->
                             <div id="trainee-fields" class="role-fields" style="display: none;">
                                 <div class="mb-3">
-                                    <label for="traineeFullName">Full Name</label>
-                                    <input type="text" th:field="*{traineeFullName}" class="form-control" id="traineeFullName">
-                                    <div th:if="${#fields.hasErrors('traineeFullName')}" class="error-message" th:errors="*{traineeFullName}"></div>
+                                    <label for="traineeFullName" class="form-label">Full Name</label>
+                                    <input type="text" th:field="*{traineeFullName}" class="form-control" 
+                                           th:classappend="${#fields.hasErrors('traineeFullName')} ? 'is-invalid'" 
+                                           id="traineeFullName">
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('traineeFullName')}" 
+                                         th:errors="*{traineeFullName}"></div>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="studentId">Student ID</label>
-                                    <input type="text" th:field="*{studentId}" class="form-control" id="studentId">
+                                    <label for="studentId" class="form-label">Student ID</label>
+                                    <input type="text" th:field="*{studentId}" class="form-control" 
+                                           th:classappend="${#fields.hasErrors('studentId')} ? 'is-invalid'" 
+                                           id="studentId">
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('studentId')}" 
+                                         th:errors="*{studentId}"></div>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="traineeSkills">Skills (comma-separated)</label>
+                                    <label for="traineeSkills" class="form-label">Skills (comma-separated)</label>
                                     <input type="text" th:field="*{traineeSkills}" class="form-control" id="traineeSkills">
                                 </div>
                                 <div class="mb-3">
-                                    <label for="traineeInterests">Interests (comma-separated)</label>
+                                    <label for="traineeInterests" class="form-label">Interests (comma-separated)</label>
                                     <input type="text" th:field="*{traineeInterests}" class="form-control" id="traineeInterests">
                                 </div>
                                 <div class="mb-3">
-                                    <label for="preferredLocation">Preferred Location</label>
+                                    <label for="preferredLocation" class="form-label">Preferred Location</label>
                                     <input type="text" th:field="*{preferredLocation}" class="form-control" id="preferredLocation">
                                 </div>
                             </div>
@@ -178,16 +197,19 @@
                             <!-- Company fields -->
                             <div id="company-fields" class="role-fields" style="display: none;">
                                 <div class="mb-3">
-                                    <label for="companyName">Company Name</label>
-                                    <input type="text" th:field="*{companyName}" class="form-control" id="companyName">
-                                    <div th:if="${#fields.hasErrors('companyName')}" class="error-message" th:errors="*{companyName}"></div>
+                                    <label for="companyName" class="form-label">Company Name</label>
+                                    <input type="text" th:field="*{companyName}" class="form-control" 
+                                           th:classappend="${#fields.hasErrors('companyName')} ? 'is-invalid'" 
+                                           id="companyName">
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('companyName')}" 
+                                         th:errors="*{companyName}"></div>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="companyLocation">Location</label>
+                                    <label for="companyLocation" class="form-label">Location</label>
                                     <input type="text" th:field="*{companyLocation}" class="form-control" id="companyLocation">
                                 </div>
                                 <div class="mb-3">
-                                    <label for="companyPhone">Phone Number</label>
+                                    <label for="companyPhone" class="form-label">Phone Number</label>
                                     <input type="text" th:field="*{companyPhone}" class="form-control" id="companyPhone">
                                 </div>
                             </div>
@@ -195,12 +217,15 @@
                             <!-- Professor fields -->
                             <div id="professor-fields" class="role-fields" style="display: none;">
                                 <div class="mb-3">
-                                    <label for="professorFullName">Full Name</label>
-                                    <input type="text" th:field="*{professorFullName}" class="form-control" id="professorFullName">
-                                    <div th:if="${#fields.hasErrors('professorFullName')}" class="error-message" th:errors="*{professorFullName}"></div>
+                                    <label for="professorFullName" class="form-label">Full Name</label>
+                                    <input type="text" th:field="*{professorFullName}" class="form-control" 
+                                           th:classappend="${#fields.hasErrors('professorFullName')} ? 'is-invalid'" 
+                                           id="professorFullName">
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('professorFullName')}" 
+                                         th:errors="*{professorFullName}"></div>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="professorInterests">Interests (comma-separated)</label>
+                                    <label for="professorInterests" class="form-label">Interests (comma-separated)</label>
                                     <input type="text" th:field="*{professorInterests}" class="form-control" id="professorInterests">
                                 </div>
                             </div>

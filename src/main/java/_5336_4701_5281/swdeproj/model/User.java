@@ -3,6 +3,7 @@ package _5336_4701_5281.swdeproj.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Objects;
@@ -30,8 +31,13 @@ public class User {
     @NotBlank(message = "Full name is required")
     private String fullName;
 
+    @NotNull(message = "Role is required")
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "roles")
     @Enumerated(EnumType.STRING)
     private Set<Role> roles = new HashSet<>();
 
@@ -76,6 +82,7 @@ public class User {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.roles = new HashSet<>();
         this.roles.add(Role.valueOf(role));
     }
 
@@ -98,7 +105,12 @@ public class User {
     public Set<Role> getRoles() { return roles; }
     public void setRoles(Set<Role> roles) { this.roles = roles; }
 
-    public void addRole(Role role) { roles.add(role); }
+    public void addRole(Role role) {
+        if (roles == null) {
+            roles = new HashSet<>();
+        }
+        roles.add(role);
+    }
 
     public boolean hasRole(Role role) { return roles.contains(role); }
 
@@ -163,10 +175,15 @@ public class User {
     public Set<Evaluation> getEvaluations() { return evaluations; }
     public void setEvaluations(Set<Evaluation> evaluations) { this.evaluations = evaluations; }
 
-    public String getRole() {
-        return roles.stream().findFirst()
-                .map(role -> role.name().substring(5))
-                .orElse(null);
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+        if (role != null) {
+            addRole(role);
+        }
     }
 
     @Override

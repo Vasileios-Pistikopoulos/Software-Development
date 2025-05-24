@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.*;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
+import java.util.stream.Collectors;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -27,12 +27,14 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         System.out.println("✅ Found user: " + user.getUsername());
         System.out.println("🧂 Encrypted password: " + user.getPassword());
-        System.out.println("🔐 Role: " + user.getRole());
+        System.out.println("🔐 Roles: " + user.getRoles());
 
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
                 user.getPassword(),
-                Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole()))
+                user.getRoles().stream()
+                    .map(role -> new SimpleGrantedAuthority(role.name()))
+                    .collect(Collectors.toList())
         );
     }
 

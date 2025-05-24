@@ -45,12 +45,12 @@ public class EvaluationController {
         Evaluation.EvaluatorType evaluatorType;
 
         switch (user.getRole()) {
-            case "COMPANY" -> {
+            case ROLE_COMPANY -> {
                 Company company = companyRepo.findByUserId(user.getId());
                 traineeships = traineeshipRepo.findByCompanyIdAndAssignedTraineeIsNotNull(company.getId());
                 evaluatorType = Evaluation.EvaluatorType.COMPANY;
             }
-            case "PROFESSOR" -> {
+            case ROLE_PROFESSOR -> {
                 ProfessorProfile professor = professorRepo.findByUserId(user.getId());
                 traineeships = traineeshipRepo.findBySupervisorId(professor.getId());
                 evaluatorType = Evaluation.EvaluatorType.PROFESSOR;
@@ -101,14 +101,14 @@ public class EvaluationController {
         Evaluation.EvaluatorType evaluatorType = null;
 
         switch (user.getRole()) {
-            case "COMPANY" -> {
+            case ROLE_COMPANY -> {
                 Company company = companyRepo.findByUserId(user.getId());
                 if (traineeship.getCompany().getId().equals(company.getId())) {
                     isAuthorized = true;
                     evaluatorType = Evaluation.EvaluatorType.COMPANY;
                 }
             }
-            case "PROFESSOR" -> {
+            case ROLE_PROFESSOR -> {
                 ProfessorProfile professor = professorRepo.findByUserId(user.getId());
                 if (traineeship.getSupervisor().getId().equals(professor.getId())) {
                     isAuthorized = true;
@@ -150,13 +150,13 @@ public class EvaluationController {
         // Verify authorization and set evaluator type
         Evaluation.EvaluatorType evaluatorType = null;
         switch (user.getRole()) {
-            case "COMPANY" -> {
+            case ROLE_COMPANY -> {
                 Company company = companyRepo.findByUserId(user.getId());
                 if (traineeship.getCompany().getId().equals(company.getId())) {
                     evaluatorType = Evaluation.EvaluatorType.COMPANY;
                 }
             }
-            case "PROFESSOR" -> {
+            case ROLE_PROFESSOR -> {
                 ProfessorProfile professor = professorRepo.findByUserId(user.getId());
                 if (traineeship.getSupervisor().getId().equals(professor.getId())) {
                     evaluatorType = Evaluation.EvaluatorType.PROFESSOR;
@@ -197,13 +197,13 @@ public class EvaluationController {
         // Verify authorization
         boolean isAuthorized = false;
         switch (user.getRole()) {
-            case "COMPANY" -> {
+            case ROLE_COMPANY -> {
                 Company company = companyRepo.findByUserId(user.getId());
                 if (evaluation.getTraineeship().getCompany().getId().equals(company.getId())) {
                     isAuthorized = true;
                 }
             }
-            case "PROFESSOR" -> {
+            case ROLE_PROFESSOR -> {
                 ProfessorProfile professor = professorRepo.findByUserId(user.getId());
                 if (evaluation.getTraineeship().getSupervisor().getId().equals(professor.getId())) {
                     isAuthorized = true;
@@ -245,13 +245,13 @@ public class EvaluationController {
         // Verify authorization
         boolean isAuthorized = false;
         switch (user.getRole()) {
-            case "COMPANY" -> {
+            case ROLE_COMPANY -> {
                 Company company = companyRepo.findByUserId(user.getId());
                 if (evaluation.getTraineeship().getCompany().getId().equals(company.getId())) {
                     isAuthorized = true;
                 }
             }
-            case "PROFESSOR" -> {
+            case ROLE_PROFESSOR -> {
                 ProfessorProfile professor = professorRepo.findByUserId(user.getId());
                 if (evaluation.getTraineeship().getSupervisor().getId().equals(professor.getId())) {
                     isAuthorized = true;
