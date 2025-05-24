@@ -17,10 +17,11 @@ public class Notification {
     @Column(nullable = false)
     private String message;
 
+    @Column(name = "is_read", nullable = false)
+    private boolean isRead;
+
     @Column(nullable = false)
     private LocalDateTime timestamp;
-
-    private boolean read = false;
 
     @Enumerated(EnumType.STRING)
     private NotificationType type;
@@ -66,20 +67,20 @@ public class Notification {
         this.message = message;
     }
 
+    public boolean isRead() {
+        return isRead;
+    }
+
+    public void setRead(boolean read) {
+        isRead = read;
+    }
+
     public LocalDateTime getTimestamp() {
         return timestamp;
     }
 
     public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
-    }
-
-    public boolean isRead() {
-        return read;
-    }
-
-    public void setRead(boolean read) {
-        this.read = read;
     }
 
     public NotificationType getType() {

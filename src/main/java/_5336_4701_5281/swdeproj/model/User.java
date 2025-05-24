@@ -41,6 +41,9 @@ public class User {
     @OneToMany(mappedBy = "evaluator")
     private Set<Evaluation> evaluations = new HashSet<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Notification> notifications = new HashSet<>();
+
     // === Συσχετίσεις με τα προφίλ ===
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -98,6 +101,19 @@ public class User {
     public void addRole(Role role) { roles.add(role); }
 
     public boolean hasRole(Role role) { return roles.contains(role); }
+
+    public Set<Notification> getNotifications() { return notifications; }
+    public void setNotifications(Set<Notification> notifications) { this.notifications = notifications; }
+
+    public void addNotification(Notification notification) {
+        notifications.add(notification);
+        notification.setUser(this);
+    }
+
+    public void removeNotification(Notification notification) {
+        notifications.remove(notification);
+        notification.setUser(null);
+    }
 
     public TraineeProfile getTraineeProfile() { return traineeProfile; }
     public void setTraineeProfile(TraineeProfile traineeProfile) {

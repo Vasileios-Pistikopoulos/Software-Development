@@ -32,6 +32,7 @@ public class UserRegistrationDto {
     // Company fields
     private String companyName;
     private String companyLocation;
+    private String companyPhone;
 
     // Professor fields
     private String professorFullName;
@@ -71,6 +72,14 @@ public class UserRegistrationDto {
 
     public String getCompanyLocation() { return companyLocation; }
     public void setCompanyLocation(String companyLocation) { this.companyLocation = companyLocation; }
+
+    public String getCompanyPhone() {
+        return companyPhone;
+    }
+
+    public void setCompanyPhone(String companyPhone) {
+        this.companyPhone = companyPhone;
+    }
 
     public String getProfessorFullName() { return professorFullName; }
     public void setProfessorFullName(String professorFullName) { this.professorFullName = professorFullName; }

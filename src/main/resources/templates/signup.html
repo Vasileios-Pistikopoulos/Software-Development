@@ -11,7 +11,9 @@
             document.querySelectorAll(".role-fields").forEach(el => el.style.display = "none");
 
             if (role) {
-                document.getElementById(role.toLowerCase() + "-fields").style.display = "block";
+                // Remove the ROLE_ prefix to match the div IDs
+                const roleType = role.replace('ROLE_', '').toLowerCase();
+                document.getElementById(roleType + "-fields").style.display = "block";
             }
         }
 
@@ -77,6 +79,11 @@
             field.parentNode.appendChild(errorDiv);
             field.classList.add('is-invalid');
         }
+
+        // Call showRoleFields on page load to handle any pre-selected role
+        document.addEventListener('DOMContentLoaded', function() {
+            showRoleFields();
+        });
     </script>
     <style>
         .error-message {
@@ -178,6 +185,10 @@
                                 <div class="mb-3">
                                     <label for="companyLocation">Location</label>
                                     <input type="text" th:field="*{companyLocation}" class="form-control" id="companyLocation">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="companyPhone">Phone Number</label>
+                                    <input type="text" th:field="*{companyPhone}" class="form-control" id="companyPhone">
                                 </div>
                             </div>
 

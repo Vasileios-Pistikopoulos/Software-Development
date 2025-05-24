@@ -2,19 +2,20 @@ package _5336_4701_5281.swdeproj.service;
 
 import _5336_4701_5281.swdeproj.model.*;
 import _5336_4701_5281.swdeproj.repository.NotificationRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-@Transactional
 public class NotificationService {
 
-    private final NotificationRepository notificationRepo;
+    private final NotificationRepository notificationRepository;
 
-    public NotificationService(NotificationRepository notificationRepo) {
-        this.notificationRepo = notificationRepo;
+    @Autowired
+    public NotificationService(NotificationRepository notificationRepository) {
+        this.notificationRepository = notificationRepository;
     }
 
     public void notifyApplicationStatus(Application application) {
@@ -36,7 +37,7 @@ public class NotificationService {
             message,
             Notification.NotificationType.APPLICATION_STATUS
         );
-        notificationRepo.save(notification);
+        notificationRepository.save(notification);
     }
 
     public void notifyLogbookStatus(LogbookEntry entry) {
@@ -56,7 +57,7 @@ public class NotificationService {
             message,
             Notification.NotificationType.LOGBOOK_STATUS
         );
-        notificationRepo.save(notification);
+        notificationRepository.save(notification);
     }
 
     public void notifyEvaluationSubmitted(Evaluation evaluation) {
@@ -71,23 +72,41 @@ public class NotificationService {
             message,
             Notification.NotificationType.EVALUATION_SUBMITTED
         );
-        notificationRepo.save(notification);
+        notificationRepository.save(notification);
+    }
+
+    @Transactional
+    public Notification createNotification(User user, String message, Notification.NotificationType type) {
+        Notification notification = new Notification(user, message, type);
+        return notificationRepository.save(notification);
+    }
+
+    public List<Notification> getUserNotifications(User user) {
+        return notificationRepository.findByUserOrderByTimestampDesc(user);
     }
 
     public List<Notification> getUnreadNotifications(User user) {
-        return notificationRepo.findByUserAndReadFalseOrderByTimestampDesc(user);
+        return notificationRepository.findByUserAndIsReadOrderByTimestampDesc(user, false);
     }
 
+    public long getUnreadNotificationCount(User user) {
+        return notificationRepository.countUnreadNotifications(user);
+    }
+
+    @Transactional
     public void markAsRead(Long notificationId) {
-        notificationRepo.findById(notificationId).ifPresent(notification -> {
+        notificationRepository.findById(notificationId).ifPresent(notification -> {
             notification.setRead(true);
-            notificationRepo.save(notification);
+            notificationRepository.save(notification);
         });
     }
 
+    @Transactional
     public void markAllAsRead(User user) {
-        List<Notification> unread = notificationRepo.findByUserAndReadFalseOrderByTimestampDesc(user);
-        unread.forEach(notification -> notification.setRead(true));
-        notificationRepo.saveAll(unread);
+        List<Notification> unreadNotifications = getUnreadNotifications(user);
+        unreadNotifications.forEach(notification -> {
+            notification.setRead(true);
+            notificationRepository.save(notification);
+        });
     }
 } 

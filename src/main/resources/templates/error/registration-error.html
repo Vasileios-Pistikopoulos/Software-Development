@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+    <title>Registration Error</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="card-title text-center mb-4 text-danger">Registration Failed</h2>
+                        
+                        <div class="alert alert-danger">
+                            <h4 class="alert-heading">Error Details:</h4>
+                            <p th:text="${errorMessage}">Error message will appear here</p>
+                            
+                            <hr>
+                            
+                            <h5>Technical Details:</h5>
+                            <pre th:text="${errorDetails}" class="bg-light p-3 rounded">Technical details will appear here</pre>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <a th:href="@{/register}" class="btn btn-primary">Try Again</a>
+                            <a th:href="@{/}" class="btn btn-secondary">Return to Home</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html> 

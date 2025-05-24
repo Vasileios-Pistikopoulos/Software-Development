@@ -2,6 +2,7 @@ package _5336_4701_5281.swdeproj.service;
 import _5336_4701_5281.swdeproj.model.User;
 import _5336_4701_5281.swdeproj.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -36,4 +37,11 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    public User getCurrentUser(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new IllegalStateException("No authenticated user found");
+        }
+        return userRepository.findByUsername(authentication.getName())
+                .orElseThrow(() -> new IllegalStateException("Authenticated user not found in database"));
+    }
 }
