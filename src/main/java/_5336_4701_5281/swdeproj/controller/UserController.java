@@ -160,7 +160,6 @@ public class UserController {
                         user.setFullName(dto.getProfessorFullName());
                         ProfessorProfile profile = new ProfessorProfile();
                         profile.setFullName(dto.getProfessorFullName());
-                        profile.setInterests(splitAndTrim(dto.getProfessorInterests()));
 
                         profile.setUser(user);
                         user.setProfessorProfile(profile);

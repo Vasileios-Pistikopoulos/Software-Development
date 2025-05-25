@@ -7,7 +7,7 @@
     <title>Create Traineeship</title>
 </head>
 <body>
-<section layout:fragment="content">
+<section layout:fragment="content" sec:authorize="hasRole('ROLE_COMPANY')">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-8">
@@ -17,6 +17,12 @@
                     </div>
                     <div class="card-body">
                         <form th:action="@{/traineeships/create}" th:object="${traineeshipDto}" method="post">
+                            <div class="mb-3">
+                                <label for="title" class="form-label">Title</label>
+                                <input type="text" class="form-control" id="title" th:field="*{title}" 
+                                       required>
+                            </div>
+
                             <div class="mb-3">
                                 <label for="description" class="form-label">Description</label>
                                 <textarea class="form-control" id="description" th:field="*{description}" 

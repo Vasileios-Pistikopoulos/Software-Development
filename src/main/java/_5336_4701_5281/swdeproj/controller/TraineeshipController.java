@@ -125,7 +125,7 @@ public class TraineeshipController {
         User user = userRepo.findByUsername(auth.getName())
                 .orElseThrow(() -> new RuntimeException("User not found"));
         
-        if (!"COMPANY".equals(user.getRole())) {
+        if (!user.getRole().equals(User.Role.ROLE_COMPANY)) {
             return "redirect:/traineeships";
         }
 
@@ -139,9 +139,15 @@ public class TraineeshipController {
         User user = userRepo.findByUsername(auth.getName())
                 .orElseThrow(() -> new RuntimeException("User not found"));
         
+        if (!user.getRole().equals(User.Role.ROLE_COMPANY)) {
+            redirectAttrs.addFlashAttribute("error", "Only companies can create traineeships");
+            return "redirect:/traineeships";
+        }
+        
         Company company = companyRepo.findByUserId(user.getId());
         
         Traineeship traineeship = new Traineeship();
+        traineeship.setTitle(dto.getTitle());
         traineeship.setDescription(dto.getDescription());
         traineeship.setStartDate(dto.getStartDate());
         traineeship.setEndDate(dto.getEndDate());
@@ -159,6 +165,7 @@ public class TraineeshipController {
     private TraineeshipDto convertToDto(Traineeship traineeship) {
         TraineeshipDto dto = new TraineeshipDto();
         dto.setId(traineeship.getId());
+        dto.setTitle(traineeship.getTitle());
         dto.setDescription(traineeship.getDescription());
         dto.setStartDate(traineeship.getStartDate());
         dto.setEndDate(traineeship.getEndDate());

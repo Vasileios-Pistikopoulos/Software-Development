@@ -16,6 +16,18 @@
             </div>
         </div>
 
+        <!-- Success Message -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${success}">Success message</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Error Message -->
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${error}">Error message</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
         <!-- Filters -->
         <div class="card mb-4">
             <div class="card-body">
@@ -48,7 +60,10 @@
             <div th:each="traineeship : ${traineeships}" class="col-md-6">
                 <div class="card h-100">
                     <div class="card-body">
-                        <h5 class="card-title" th:text="${traineeship.companyName}">Company Name</h5>
+                        <h5 class="card-title">
+                            <span th:text="${traineeship.title}">Position Title</span>
+                            <small class="text-muted" th:text="'at ' + ${traineeship.companyName}">at Company Name</small>
+                        </h5>
                         <h6 class="card-subtitle mb-2 text-muted" th:text="${traineeship.location}">Location</h6>
                         
                         <p class="card-text" th:text="${traineeship.description}">Description</p>

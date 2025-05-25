@@ -8,6 +8,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import java.util.stream.Collectors;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -29,12 +31,19 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         System.out.println("🧂 Encrypted password: " + user.getPassword());
         System.out.println("🔐 Roles: " + user.getRoles());
 
+        // Ensure both role and roles set are considered
+        Set<SimpleGrantedAuthority> authorities = new HashSet<>();
+        if (user.getRole() != null) {
+            authorities.add(new SimpleGrantedAuthority(user.getRole().name()));
+        }
+        user.getRoles().forEach(role -> 
+            authorities.add(new SimpleGrantedAuthority(role.name()))
+        );
+
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
                 user.getPassword(),
-                user.getRoles().stream()
-                    .map(role -> new SimpleGrantedAuthority(role.name()))
-                    .collect(Collectors.toList())
+                authorities
         );
     }
 

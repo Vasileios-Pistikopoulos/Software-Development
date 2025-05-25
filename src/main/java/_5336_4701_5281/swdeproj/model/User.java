@@ -102,8 +102,22 @@ public class User {
     public String getFullName() { return fullName; }
     public void setFullName(String fullName) { this.fullName = fullName; }
 
-    public Set<Role> getRoles() { return roles; }
-    public void setRoles(Set<Role> roles) { this.roles = roles; }
+    public Set<Role> getRoles() {
+        if (roles == null) {
+            roles = new HashSet<>();
+        }
+        if (role != null && !roles.contains(role)) {
+            roles.add(role);
+        }
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+        if (!roles.isEmpty()) {
+            this.role = roles.iterator().next(); // Set the primary role
+        }
+    }
 
     public void addRole(Role role) {
         if (roles == null) {
@@ -112,7 +126,9 @@ public class User {
         roles.add(role);
     }
 
-    public boolean hasRole(Role role) { return roles.contains(role); }
+    public boolean hasRole(Role role) {
+        return roles != null && roles.contains(role);
+    }
 
     public Set<Notification> getNotifications() { return notifications; }
     public void setNotifications(Set<Notification> notifications) { this.notifications = notifications; }
@@ -181,9 +197,7 @@ public class User {
 
     public void setRole(Role role) {
         this.role = role;
-        if (role != null) {
-            addRole(role);
-        }
+        addRole(role); // Ensure the role is also added to the roles set
     }
 
     @Override

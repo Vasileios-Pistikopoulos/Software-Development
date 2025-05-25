@@ -65,6 +65,11 @@ public class SecurityConfig {
                         "/images/**"
                     ).permitAll();
                     
+                    // Role-based authorization
+                    auth.requestMatchers("/traineeships/create/**").hasRole("COMPANY");
+                    auth.requestMatchers("/traineeships/*/apply").hasRole("TRAINEE");
+                    auth.requestMatchers("/evaluations/**").hasAnyRole("COMPANY", "PROFESSOR");
+                    
                     // All other URLs require authentication
                     auth.anyRequest().authenticated();
                 })

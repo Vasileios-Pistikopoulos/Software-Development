@@ -15,11 +15,6 @@ public class ProfessorProfile {
     @Column(nullable = false)
     private String fullName;
 
-    @ElementCollection
-    @CollectionTable(name = "professor_interests", joinColumns = @JoinColumn(name = "professor_id"))
-    @Column(name = "interest")
-    private List<String> interests;
-
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -31,9 +26,8 @@ public class ProfessorProfile {
 
     public ProfessorProfile() {}
 
-    public ProfessorProfile(String fullName, List<String> interests) {
+    public ProfessorProfile(String fullName) {
         this.fullName = fullName;
-        this.interests = interests;
     }
 
     // === Getters & Setters ===
@@ -42,9 +36,6 @@ public class ProfessorProfile {
 
     public String getFullName() { return fullName; }
     public void setFullName(String fullName) { this.fullName = fullName; }
-
-    public List<String> getInterests() { return interests; }
-    public void setInterests(List<String> interests) { this.interests = interests; }
 
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }

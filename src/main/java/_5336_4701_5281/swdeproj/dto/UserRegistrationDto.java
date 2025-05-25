@@ -36,7 +36,6 @@ public class UserRegistrationDto {
 
     // Professor fields
     private String professorFullName;
-    private String professorInterests;   // comma-separated string
 
     // === Getters & Setters ===
 
@@ -83,7 +82,4 @@ public class UserRegistrationDto {
 
     public String getProfessorFullName() { return professorFullName; }
     public void setProfessorFullName(String professorFullName) { this.professorFullName = professorFullName; }
-
-    public String getProfessorInterests() { return professorInterests; }
-    public void setProfessorInterests(String professorInterests) { this.professorInterests = professorInterests; }
 }
