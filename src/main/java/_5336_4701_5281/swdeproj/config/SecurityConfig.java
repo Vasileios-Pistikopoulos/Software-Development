@@ -69,6 +69,7 @@ public class SecurityConfig {
                     auth.requestMatchers("/traineeships/create/**").hasRole("COMPANY");
                     auth.requestMatchers("/traineeships/*/apply").hasRole("TRAINEE");
                     auth.requestMatchers("/evaluations/**").hasAnyRole("COMPANY", "PROFESSOR");
+                    auth.requestMatchers("/committee/**").hasRole("COMMITTEE");
                     
                     // All other URLs require authentication
                     auth.anyRequest().authenticated();
@@ -77,13 +78,13 @@ public class SecurityConfig {
                     logger.info("Configuring form login");
                     form.loginPage("/login")
                         .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/", true)
+                        .defaultSuccessUrl("/home")
                         .failureUrl("/login?error=true")
                         .permitAll();
                 })
                 .logout(logout -> {
                     logger.info("Configuring logout");
-                    logout.logoutUrl("/logout")
+                    logout.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                           .logoutSuccessUrl("/login?logout=true")
                           .invalidateHttpSession(true)
                           .clearAuthentication(true)

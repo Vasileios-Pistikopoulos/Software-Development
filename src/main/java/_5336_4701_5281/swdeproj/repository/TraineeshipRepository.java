@@ -55,5 +55,14 @@ public interface TraineeshipRepository extends JpaRepository<Traineeship, Long> 
 
     List<Traineeship> findByCompanyIdAndAssignedTraineeIsNotNull(Long companyId);
     
-    List<Traineeship> findBySupervisorId(Long supervisorId);
+    @Query("SELECT t FROM Traineeship t WHERE t.supervisor.id = :supervisorId")
+    List<Traineeship> findBySupervisorId(@Param("supervisorId") Long supervisorId);
+
+    @Query("SELECT t FROM Traineeship t " +
+           "LEFT JOIN FETCH t.requiredSkills " +
+           "LEFT JOIN FETCH t.topics " +
+           "WHERE t.status = :status")
+    List<Traineeship> findByStatusWithCollections(@Param("status") Traineeship.Status status);
+
+    List<Traineeship> findByStatusAndSupervisorIsNull(Traineeship.Status status);
 } 

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+    <title>Apply for Traineeship</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="container">
+        <!-- Alert Messages -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${success}">Success message</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${error}">Error message</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Back Button -->
+        <div class="mb-4">
+            <a th:href="@{/traineeships}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Traineeships
+            </a>
+        </div>
+
+        <!-- Application Form -->
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title mb-4">Apply for Traineeship</h2>
+                
+                <form th:action="@{/traineeships/apply}" method="post">
+                    <div class="mb-3">
+                        <label for="skills" class="form-label">Skills (comma-separated)</label>
+                        <input type="text" class="form-control" id="skills" name="skills" 
+                               th:value="${#strings.listJoin(traineeProfile.skills, ', ')}" required>
+                        <div class="form-text">List your technical skills, separated by commas</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="interests" class="form-label">Interests (comma-separated)</label>
+                        <input type="text" class="form-control" id="interests" name="interests" 
+                               th:value="${#strings.listJoin(traineeProfile.interests, ', ')}" required>
+                        <div class="form-text">List your areas of interest, separated by commas</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="preferredLocation" class="form-label">Preferred Location</label>
+                        <input type="text" class="form-control" id="preferredLocation" name="preferredLocation" 
+                               th:value="${traineeProfile.preferredLocation}" required>
+                        <div class="form-text">Enter your preferred location for the traineeship</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="coverLetter" class="form-label">Cover Letter</label>
+                        <textarea class="form-control" id="coverLetter" name="coverLetter" rows="5" 
+                                  placeholder="Explain why you're interested in a traineeship and what you hope to gain from the experience"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Submit Application</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html> 

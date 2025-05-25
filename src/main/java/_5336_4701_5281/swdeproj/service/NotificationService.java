@@ -2,6 +2,7 @@ package _5336_4701_5281.swdeproj.service;
 
 import _5336_4701_5281.swdeproj.model.*;
 import _5336_4701_5281.swdeproj.repository.NotificationRepository;
+import _5336_4701_5281.swdeproj.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,73 +13,49 @@ import java.util.List;
 public class NotificationService {
 
     private final NotificationRepository notificationRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public NotificationService(NotificationRepository notificationRepository) {
+    public NotificationService(NotificationRepository notificationRepository, UserRepository userRepository) {
         this.notificationRepository = notificationRepository;
+        this.userRepository = userRepository;
     }
 
-    public void notifyApplicationStatus(Application application) {
-        String status = application.getStatus().toString();
-        String message = String.format(
-            "Your application for %s at %s has been %s",
-            application.getTraineeship().getTitle(),
-            application.getTraineeship().getCompany().getName(),
-            status.toLowerCase()
-        );
-
-        if (application.getStatus() == Application.Status.APPROVED) {
-            message += String.format(" with %s as your supervisor",
-                application.getSupervisor().getFullName());
+    public void notifyApplicationStatusChange(Application application) {
+        User trainee = application.getTrainee().getUser();
+        String message = String.format("Your application has been %s",
+            application.getStatus().toString().toLowerCase());
+        
+        if (application.getStatus() == Application.Status.APPROVED && application.getAssignedTraineeship() != null) {
+            message += String.format(" for the position: %s at %s",
+                application.getAssignedTraineeship().getTitle(),
+                application.getAssignedTraineeship().getCompany().getName());
         }
 
         Notification notification = new Notification(
-            application.getTrainee().getUser(),
+            trainee,
             message,
             Notification.NotificationType.APPLICATION_STATUS
         );
         notificationRepository.save(notification);
     }
 
-    public void notifyLogbookStatus(LogbookEntry entry) {
-        String status = entry.getStatus().toString();
-        String message = String.format(
-            "Your logbook entry for %s has been %s",
-            entry.getDate().toString(),
-            status.toLowerCase()
-        );
-
-        if (entry.getStatus() == LogbookEntry.Status.REJECTED && entry.getComments() != null) {
-            message += String.format(" with comment: %s", entry.getComments());
-        }
-
-        Notification notification = new Notification(
-            entry.getTrainee(),
-            message,
-            Notification.NotificationType.LOGBOOK_STATUS
-        );
-        notificationRepository.save(notification);
-    }
-
-    public void notifyEvaluationSubmitted(Evaluation evaluation) {
-        String evaluatorType = evaluation.getEvaluatorType().toString();
-        String message = String.format(
-            "A new %s evaluation has been submitted for your traineeship",
-            evaluatorType.toLowerCase()
-        );
-
-        Notification notification = new Notification(
-            evaluation.getTraineeship().getAssignedTrainee().getUser(),
-            message,
-            Notification.NotificationType.EVALUATION_SUBMITTED
-        );
-        notificationRepository.save(notification);
-    }
-
-    @Transactional
-    public Notification createNotification(User user, String message, Notification.NotificationType type) {
-        Notification notification = new Notification(user, message, type);
-        return notificationRepository.save(notification);
+    public void notifyNewApplication(Application application) {
+        // Get all committee members
+        List<User> committeeMembers = userRepository.findByRolesContaining(User.Role.ROLE_COMMITTEE);
+        
+        // Create notification for each committee member
+        String message = String.format("New application received from %s",
+            application.getTrainee().getFullName());
+        
+        committeeMembers.forEach(committeeMember -> {
+            Notification notification = new Notification(
+                committeeMember,
+                message,
+                Notification.NotificationType.APPLICATION_STATUS
+            );
+            notificationRepository.save(notification);
+        });
     }
 
     public List<Notification> getUserNotifications(User user) {

@@ -1,0 +1,21 @@
+                        <!-- Committee actions -->
+                        <div sec:authorize="hasRole('ROLE_COMMITTEE')" class="mt-4">
+                            <h4>Committee Actions</h4>
+                            <div class="d-flex gap-2">
+                                <!-- Assign Supervisor button - only show if traineeship is filled and no supervisor assigned -->
+                                <a th:if="${traineeship.status == T(_5336_4701_5281.swdeproj.model.Traineeship.Status).FILLED && traineeship.supervisorName == null}"
+                                   th:href="@{/traineeships/{id}/assign-supervisor(id=${traineeship.id})}"
+                                   class="btn btn-primary">
+                                    Assign Supervisor
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Supervisor Information -->
+                        <div th:if="${traineeship.supervisorName != null}" class="mt-4">
+                            <h4>Supervisor</h4>
+                            <p>
+                                <strong>Name:</strong> 
+                                <span th:text="${traineeship.supervisorName}">Professor Name</span>
+                            </p>
+                        </div> 

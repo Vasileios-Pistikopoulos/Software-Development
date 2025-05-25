@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+    <title>Supervised Traineeships</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="container">
+        <!-- Alert Messages -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${success}">Success message</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${error}">Error message</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <h2 class="mb-4">Supervised Traineeships</h2>
+
+        <!-- Traineeships List -->
+        <div th:if="${traineeships.empty}" class="alert alert-info">
+            You are not currently supervising any traineeships.
+        </div>
+
+        <div th:if="${!traineeships.empty}" class="row g-4">
+            <div th:each="traineeship : ${traineeships}" class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${traineeship.title}">Position Title</h5>
+                        <h6 class="card-subtitle mb-2 text-muted" th:text="${traineeship.companyName}">Company Name</h6>
+                        
+                        <div class="mb-3">
+                            <strong>Assigned Trainee:</strong><br>
+                            <span th:text="${traineeship.assignedTraineeName}">Student Name</span>
+                        </div>
+
+                        <div class="mb-3">
+                            <strong>Duration:</strong><br>
+                            From: <span th:text="${#temporals.format(traineeship.startDate, 'dd/MM/yyyy')}">01/01/2024</span><br>
+                            To: <span th:text="${#temporals.format(traineeship.endDate, 'dd/MM/yyyy')}">30/06/2024</span>
+                        </div>
+
+                        <div class="mb-3">
+                            <strong>Location:</strong><br>
+                            <span th:text="${traineeship.location}">Location</span>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a th:href="@{/traineeships/{id}(id=${traineeship.id})}" 
+                               class="btn btn-outline-primary">
+                                <i class="bi bi-eye"></i> View Details
+                            </a>
+                            
+                            <!-- Evaluation button - only show if not already evaluated -->
+                            <a th:if="${!traineeship.hasEvaluation}" 
+                               th:href="@{/professor/traineeships/{id}/evaluate(id=${traineeship.id})}" 
+                               class="btn btn-primary">
+                                <i class="bi bi-star"></i> Evaluate
+                            </a>
+                            <span th:if="${traineeship.hasEvaluation}" class="badge bg-success">
+                                <i class="bi bi-check-circle"></i> Evaluated
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html> 

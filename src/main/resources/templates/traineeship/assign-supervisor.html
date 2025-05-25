@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+    <title>Assign Supervisor</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="mb-0">Assign Supervisor</h4>
+                    </div>
+                    <div class="card-body">
+                        <!-- Traineeship Info -->
+                        <div class="mb-4">
+                            <h5>Traineeship Details</h5>
+                            <p><strong>Title:</strong> <span th:text="${traineeship.title}">Title</span></p>
+                            <p><strong>Company:</strong> <span th:text="${traineeship.company.name}">Company</span></p>
+                            <p><strong>Location:</strong> <span th:text="${traineeship.location}">Location</span></p>
+                            <p><strong>Duration:</strong> 
+                                <span th:text="${#temporals.format(traineeship.startDate, 'dd/MM/yyyy')}">Start Date</span> - 
+                                <span th:text="${#temporals.format(traineeship.endDate, 'dd/MM/yyyy')}">End Date</span>
+                            </p>
+                        </div>
+
+                        <!-- Professor Selection -->
+                        <form th:action="@{/traineeships/{id}/assign-supervisor(id=${traineeship.id})}" method="post">
+                            <div class="mb-4">
+                                <h5>Select Professor</h5>
+                                <div class="row">
+                                    <div th:each="professor : ${professors}" class="col-md-6 mb-3">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" 
+                                                           name="professorId" th:value="${professor.id}" 
+                                                           th:id="'professor-' + ${professor.id}">
+                                                    <label class="form-check-label" th:for="'professor-' + ${professor.id}">
+                                                        <h6 class="mb-1" th:text="${professor.fullName}">Professor Name</h6>
+                                                        
+                                                        <!-- Suitability Score -->
+                                                        <div class="mb-2">
+                                                            <div class="progress" style="height: 20px;">
+                                                                <div class="progress-bar bg-success" role="progressbar" 
+                                                                     th:style="'width: ' + ${professor.suitabilityScore * 100} + '%'"
+                                                                     th:text="${#numbers.formatDecimal(professor.suitabilityScore * 100, 1, 1)} + '%'">
+                                                                </div>
+                                                            </div>
+                                                            <small class="text-muted">Suitability Score</small>
+                                                        </div>
+
+                                                        <!-- Load Score -->
+                                                        <p class="mb-1">
+                                                            <strong>Current Load:</strong> 
+                                                            <span th:text="${professor.supervisedTraineeships.?[status.name() == 'FILLED'].size()}">0</span> traineeships
+                                                            <span class="badge bg-info ms-2" 
+                                                                  th:text="'Load Score: ' + ${#numbers.formatDecimal(professor.loadScore * 100, 1, 1)} + '%'">
+                                                            </span>
+                                                        </p>
+
+                                                        <!-- Interest Score -->
+                                                        <p class="mb-1">
+                                                            <strong>Interest Match:</strong>
+                                                            <span class="badge bg-success" 
+                                                                  th:text="${#numbers.formatDecimal(professor.interestScore * 100, 1, 1)} + '%'">
+                                                            </span>
+                                                        </p>
+
+                                                        <!-- Interests -->
+                                                        <p class="mb-0">
+                                                            <strong>Interests:</strong><br>
+                                                            <span th:each="interest : ${professor.interests}" 
+                                                                  class="badge bg-info me-1 mb-1" 
+                                                                  th:text="${interest}">Interest</span>
+                                                        </p>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between">
+                                <a th:href="@{/traineeships/{id}(id=${traineeship.id})}" class="btn btn-secondary">
+                                    <i class="bi bi-arrow-left"></i> Back
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-person-plus"></i> Assign Supervisor
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html> 

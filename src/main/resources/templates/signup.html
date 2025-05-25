@@ -224,6 +224,16 @@
                                     <div class="invalid-feedback" th:if="${#fields.hasErrors('professorFullName')}" 
                                          th:errors="*{professorFullName}"></div>
                                 </div>
+                                <div class="mb-3">
+                                    <label for="professorInterests" class="form-label">Research Interests</label>
+                                    <input type="text" th:field="*{professorInterests}" class="form-control" 
+                                           th:classappend="${#fields.hasErrors('professorInterests')} ? 'is-invalid'" 
+                                           id="professorInterests" 
+                                           placeholder="Enter your research interests, separated by commas">
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('professorInterests')}" 
+                                         th:errors="*{professorInterests}"></div>
+                                    <small class="form-text text-muted">Enter interests separated by commas (e.g., Machine Learning, Data Science, AI)</small>
+                                </div>
                             </div>
 
                             <!-- Committee fields -->

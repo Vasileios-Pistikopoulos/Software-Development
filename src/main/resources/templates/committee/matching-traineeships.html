@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Matching Traineeships</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4">
+        <h2>Matching Traineeships for <span th:text="${student.fullName}">Student Name</span></h2>
+        
+        <!-- Search Form -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <form th:action="@{/committee/applications/{id}/search-matches(id=${currentApplication.id})}" method="get" class="row g-3">
+                    <div class="col-md-4">
+                        <label for="interests" class="form-label">Interests</label>
+                        <input type="text" class="form-control" id="interests" name="interests" 
+                               th:value="${searchInterests}" placeholder="Enter interests">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="location" class="form-label">Location</label>
+                        <input type="text" class="form-control" id="location" name="location" 
+                               th:value="${searchLocation}" placeholder="Enter location">
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Student Profile -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Student Profile</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Name:</strong> <span th:text="${student.fullName}">Student Name</span></p>
+                        <p><strong>Student ID:</strong> <span th:text="${student.studentId}">Student ID</span></p>
+                        <p><strong>Preferred Location:</strong> <span th:text="${student.preferredLocation}">Location</span></p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Skills:</strong></p>
+                        <div>
+                            <span th:each="skill : ${student.skills}" 
+                                  class="badge bg-primary me-1" th:text="${skill}">Skill</span>
+                        </div>
+                        <p class="mt-2"><strong>Interests:</strong></p>
+                        <div>
+                            <span th:each="interest : ${student.interests}" 
+                                  class="badge bg-info me-1" th:text="${interest}">Interest</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Matching Traineeships -->
+        <h3 class="mb-3">Matching Traineeships</h3>
+        <div class="row g-4">
+            <div th:each="traineeship : ${matchingTraineeships}" class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <span th:text="${traineeship.title}">Position Title</span>
+                            <small class="text-muted" th:text="'at ' + ${traineeship.companyName}">at Company Name</small>
+                        </h5>
+                        <h6 class="card-subtitle mb-2 text-muted" th:text="${traineeship.location}">Location</h6>
+                        
+                        <p class="card-text" th:text="${traineeship.description}">Description</p>
+                        
+                        <div class="mb-3">
+                            <strong>Required Skills:</strong>
+                            <span th:each="skill : ${traineeship.skillsRequired}" 
+                                  class="badge bg-primary me-1" th:text="${skill}">Skill</span>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <strong>Topics:</strong>
+                            <span th:each="topic : ${traineeship.topics}" 
+                                  class="badge bg-info me-1" th:text="${topic}">Topic</span>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                <span th:text="${#temporals.format(traineeship.startDate, 'dd/MM/yyyy')}">Start Date</span> - 
+                                <span th:text="${#temporals.format(traineeship.endDate, 'dd/MM/yyyy')}">End Date</span>
+                            </small>
+                            <a th:href="@{/traineeships/{id}(id=${traineeship.id})}" 
+                               class="btn btn-outline-primary btn-sm">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- No Results Message -->
+        <div th:if="${matchingTraineeships.empty}" class="alert alert-info mt-4">
+            No matching traineeships found. Try adjusting your search criteria.
+        </div>
+
+        <!-- Back Button -->
+        <div class="mt-4">
+            <a th:href="@{/committee/applications}" class="btn btn-secondary">Back to Applications</a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

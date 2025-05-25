@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+    <title>Assigned Traineeships</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="container">
+        <!-- Alert Messages -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${success}">Success message</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${error}">Error message</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Assigned Traineeships</h1>
+            <a th:href="@{/}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+
+        <!-- Assigned Traineeships List -->
+        <div th:if="${assignedTraineeships.empty}" class="alert alert-info">
+            You don't have any assigned traineeships at the moment.
+        </div>
+
+        <div th:if="${!assignedTraineeships.empty}" class="row g-4">
+            <div th:each="traineeship : ${assignedTraineeships}" class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${traineeship.title}">Position Title</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">
+                            Assigned to: <span th:text="${traineeship.assignedTraineeName}">Student Name</span>
+                        </h6>
+                        
+                        <div class="mb-3">
+                            <strong>Duration:</strong><br>
+                            From: <span th:text="${#temporals.format(traineeship.startDate, 'dd/MM/yyyy')}">01/01/2024</span><br>
+                            To: <span th:text="${#temporals.format(traineeship.endDate, 'dd/MM/yyyy')}">30/06/2024</span>
+                        </div>
+
+                        <div class="mb-3">
+                            <strong>Supervisor:</strong><br>
+                            <span th:text="${traineeship.supervisorName}">Professor Name</span>
+                        </div>
+
+                        <!-- Evaluation Form -->
+                        <div th:if="${!traineeship.hasEvaluation}" class="mt-3">
+                            <h6>Submit Evaluation</h6>
+                            <form th:action="@{/company/evaluations/submit}" method="post">
+                                <input type="hidden" name="traineeshipId" th:value="${traineeship.id}">
+                                
+                                <div class="mb-3">
+                                    <label for="motivation" class="form-label">Motivation (1-5)</label>
+                                    <input type="number" class="form-control" id="motivation" name="motivation" 
+                                           min="1" max="5" required>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="effectiveness" class="form-label">Effectiveness (1-5)</label>
+                                    <input type="number" class="form-control" id="effectiveness" name="effectiveness" 
+                                           min="1" max="5" required>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="efficiency" class="form-label">Efficiency (1-5)</label>
+                                    <input type="number" class="form-control" id="efficiency" name="efficiency" 
+                                           min="1" max="5" required>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-primary">Submit Evaluation</button>
+                            </form>
+                        </div>
+                        
+                        <!-- Evaluation Status -->
+                        <div th:if="${traineeship.hasEvaluation}" class="mt-3">
+                            <div class="alert alert-success">
+                                <i class="bi bi-check-circle"></i> Evaluation submitted
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html> 

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+    <title>Edit Traineeship Position</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title mb-0">Edit Traineeship Position</h2>
+                    </div>
+                    <div class="card-body">
+                        <!-- Error Message -->
+                        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <span th:text="${error}">Error message</span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+
+                        <form th:action="@{/traineeships/{id}/edit(id=${traineeship.id})}" 
+                              th:object="${traineeshipDto}" method="post">
+                            <div class="mb-3">
+                                <label for="title" class="form-label">Title</label>
+                                <input type="text" class="form-control" id="title" th:field="*{title}" 
+                                       th:value="${traineeship.title}" required>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('title')}" 
+                                     th:errors="*{title}"></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea class="form-control" id="description" th:field="*{description}" 
+                                          th:text="${traineeship.description}" rows="4" required></textarea>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('description')}" 
+                                     th:errors="*{description}"></div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="startDate" class="form-label">Start Date</label>
+                                    <input type="date" class="form-control" id="startDate" 
+                                           name="startDate" th:value="${#temporals.format(traineeship.startDate, 'yyyy-MM-dd')}" required>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('startDate')}" 
+                                         th:errors="*{startDate}"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="endDate" class="form-label">End Date</label>
+                                    <input type="date" class="form-control" id="endDate" 
+                                           name="endDate" th:value="${#temporals.format(traineeship.endDate, 'yyyy-MM-dd')}" required>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('endDate')}" 
+                                         th:errors="*{endDate}"></div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="location" class="form-label">Location</label>
+                                <input type="text" class="form-control" id="location" 
+                                       th:field="*{location}" th:value="${traineeship.location}" required>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('location')}" 
+                                     th:errors="*{location}"></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="skillsRequired" class="form-label">Required Skills (comma-separated)</label>
+                                <input type="text" class="form-control" id="skillsRequired" 
+                                       th:field="*{skillsRequired}" 
+                                       th:value="${#strings.listJoin(traineeship.skillsRequired, ', ')}"
+                                       placeholder="e.g. Java, Spring, MySQL">
+                                <small class="form-text text-muted">Enter skills separated by commas</small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="topics" class="form-label">Topics (comma-separated)</label>
+                                <input type="text" class="form-control" id="topics" 
+                                       th:field="*{topics}" 
+                                       th:value="${#strings.listJoin(traineeship.topics, ', ')}"
+                                       placeholder="e.g. Web Development, Data Science">
+                                <small class="form-text text-muted">Enter topics separated by commas</small>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                                <a th:href="@{/traineeships/{id}(id=${traineeship.id})}" 
+                                   class="btn btn-outline-secondary">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html> 

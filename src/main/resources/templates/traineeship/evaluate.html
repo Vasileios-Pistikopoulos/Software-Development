@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+    <title>Evaluate Trainee</title>
+    <style>
+        .rating-group {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+        }
+        .rating-group input[type="radio"] {
+            display: none;
+        }
+        .rating-group label {
+            cursor: pointer;
+            padding: 5px;
+            font-size: 1.5em;
+            color: #ddd;
+        }
+        .rating-group label:hover,
+        .rating-group label:hover ~ label,
+        .rating-group input[type="radio"]:checked ~ label {
+            color: #ffd700;
+        }
+    </style>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="container">
+        <!-- Alert Messages -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${success}">Success message</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${error}">Error message</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Back Button -->
+        <div class="mb-4">
+            <a th:href="@{/traineeships/{id}(id=${traineeship.id})}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Traineeship
+            </a>
+        </div>
+
+        <!-- Evaluation Form -->
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title mb-4">Evaluate Trainee</h2>
+                
+                <div class="mb-4">
+                    <h5>Trainee Information</h5>
+                    <p><strong>Name:</strong> <span th:text="${traineeship.assignedTraineeName}">Trainee Name</span></p>
+                    <p><strong>Position:</strong> <span th:text="${traineeship.title}">Position Title</span></p>
+                </div>
+
+                <form th:action="@{/traineeships/{id}/evaluate(id=${traineeship.id})}" method="post">
+                    <div class="mb-4">
+                        <h5>Rating Criteria</h5>
+                        <p class="text-muted">Please rate the trainee on a scale from 1 (poor) to 5 (excellent)</p>
+                        
+                        <!-- Motivation Rating -->
+                        <div class="mb-4">
+                            <label class="form-label">Motivation</label>
+                            <div class="rating-group">
+                                <input type="radio" name="motivationRating" value="5" id="motivation-5" required>
+                                <label for="motivation-5">★</label>
+                                <input type="radio" name="motivationRating" value="4" id="motivation-4">
+                                <label for="motivation-4">★</label>
+                                <input type="radio" name="motivationRating" value="3" id="motivation-3">
+                                <label for="motivation-3">★</label>
+                                <input type="radio" name="motivationRating" value="2" id="motivation-2">
+                                <label for="motivation-2">★</label>
+                                <input type="radio" name="motivationRating" value="1" id="motivation-1">
+                                <label for="motivation-1">★</label>
+                            </div>
+                            <small class="form-text text-muted">Rate the trainee's enthusiasm and dedication to work</small>
+                        </div>
+
+                        <!-- Effectiveness Rating -->
+                        <div class="mb-4">
+                            <label class="form-label">Effectiveness</label>
+                            <div class="rating-group">
+                                <input type="radio" name="effectivenessRating" value="5" id="effectiveness-5" required>
+                                <label for="effectiveness-5">★</label>
+                                <input type="radio" name="effectivenessRating" value="4" id="effectiveness-4">
+                                <label for="effectiveness-4">★</label>
+                                <input type="radio" name="effectivenessRating" value="3" id="effectiveness-3">
+                                <label for="effectiveness-3">★</label>
+                                <input type="radio" name="effectivenessRating" value="2" id="effectiveness-2">
+                                <label for="effectiveness-2">★</label>
+                                <input type="radio" name="effectivenessRating" value="1" id="effectiveness-1">
+                                <label for="effectiveness-1">★</label>
+                            </div>
+                            <small class="form-text text-muted">Rate how effectively the trainee performed their tasks</small>
+                        </div>
+
+                        <!-- Efficiency Rating -->
+                        <div class="mb-4">
+                            <label class="form-label">Efficiency</label>
+                            <div class="rating-group">
+                                <input type="radio" name="efficiencyRating" value="5" id="efficiency-5" required>
+                                <label for="efficiency-5">★</label>
+                                <input type="radio" name="efficiencyRating" value="4" id="efficiency-4">
+                                <label for="efficiency-4">★</label>
+                                <input type="radio" name="efficiencyRating" value="3" id="efficiency-3">
+                                <label for="efficiency-3">★</label>
+                                <input type="radio" name="efficiencyRating" value="2" id="efficiency-2">
+                                <label for="efficiency-2">★</label>
+                                <input type="radio" name="efficiencyRating" value="1" id="efficiency-1">
+                                <label for="efficiency-1">★</label>
+                            </div>
+                            <small class="form-text text-muted">Rate how efficiently the trainee completed their work</small>
+                        </div>
+
+                        <!-- Comments -->
+                        <div class="mb-4">
+                            <label for="comments" class="form-label">Additional Comments</label>
+                            <textarea class="form-control" id="comments" name="comments" rows="4" 
+                                    placeholder="Please provide any additional feedback about the trainee's performance..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Submit Evaluation
+                        </button>
+                        <a th:href="@{/traineeships/{id}(id=${traineeship.id})}" class="btn btn-outline-secondary">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html> 

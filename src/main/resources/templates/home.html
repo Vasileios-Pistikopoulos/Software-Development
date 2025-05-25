@@ -56,13 +56,13 @@
                 <div class="card stat-card h-100">
                     <div class="card-body">
                         <h5 class="card-title">Active Traineeship</h5>
-                        <p class="card-text" th:text="${activeTraineeship?.company?.companyName ?: 'None'}">None</p>
+                        <p class="card-text" th:text="${activeTraineeship?.company?.name ?: 'None'}">None</p>
                     </div>
                 </div>
             </div>
 
             <!-- Action Cards -->
-            <div class="col-md-6">
+            <div class="col-md-6" th:unless="${activeTraineeship != null}">
                 <div class="card dashboard-card h-100">
                     <div class="card-body">
                         <h5 class="card-title">Find Traineeships</h5>
@@ -71,7 +71,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-6" th:if="${activeTraineeship != null}">
                 <div class="card dashboard-card h-100">
                     <div class="card-body">
                         <h5 class="card-title">Manage Logbook</h5>
@@ -125,9 +125,9 @@
             <div class="col-md-6">
                 <div class="card dashboard-card h-100">
                     <div class="card-body">
-                        <h5 class="card-title">Review Applications</h5>
-                        <p class="card-text">Review and respond to traineeship applications.</p>
-                        <a th:href="@{/company/applications}" class="btn btn-primary">View Applications</a>
+                        <h5 class="card-title">Assigned Traineeships</h5>
+                        <p class="card-text">View and evaluate assigned trainees.</p>
+                        <a th:href="@{/company/assigned-traineeships}" class="btn btn-primary">View Assigned Positions</a>
                     </div>
                 </div>
             </div>
@@ -227,9 +227,9 @@
             <div class="col-md-6">
                 <div class="card dashboard-card h-100">
                     <div class="card-body">
-                        <h5 class="card-title">System Overview</h5>
-                        <p class="card-text">Monitor overall system statistics and reports.</p>
-                        <a th:href="@{/committee/overview}" class="btn btn-primary">View Overview</a>
+                        <h5 class="card-title">Assign Supervisors</h5>
+                        <p class="card-text">Assign supervising professors to active traineeships based on interests and load.</p>
+                        <a th:href="@{/traineeships}" class="btn btn-primary">View Traineeships</a>
                     </div>
                 </div>
             </div>

@@ -15,7 +15,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 public class UserController {
@@ -110,14 +112,20 @@ public class UserController {
                             result.rejectValue("traineeFullName", "error.traineeFullName", "Full name is required for trainees");
                             return "signup";
                         }
+                        // Check for duplicate studentId
+                        if (traineeRepo.findByStudentId(dto.getStudentId()) != null) {
+                            logger.warn("Registration failed - Student ID already exists: {}", dto.getStudentId());
+                            result.rejectValue("studentId", "error.studentId", "A trainee with this Student ID already exists");
+                            return "signup";
+                        }
                         user.setFullName(dto.getTraineeFullName());
                         
                         // Create TraineeProfile
                         TraineeProfile profile = new TraineeProfile();
                         profile.setFullName(dto.getTraineeFullName());
                         profile.setStudentId(dto.getStudentId());
-                        profile.setSkills(splitAndTrim(dto.getTraineeSkills()));
-                        profile.setInterests(splitAndTrim(dto.getTraineeInterests()));
+                        profile.setSkills(new HashSet<>(splitAndTrim(dto.getTraineeSkills())));
+                        profile.setInterests(new HashSet<>(splitAndTrim(dto.getTraineeInterests())));
                         profile.setPreferredLocation(dto.getPreferredLocation());
 
                         profile.setUser(user);
@@ -160,6 +168,12 @@ public class UserController {
                         user.setFullName(dto.getProfessorFullName());
                         ProfessorProfile profile = new ProfessorProfile();
                         profile.setFullName(dto.getProfessorFullName());
+                        
+                        // Set interests if provided
+                        if (dto.getProfessorInterests() != null && !dto.getProfessorInterests().isBlank()) {
+                            Set<String> interests = new HashSet<>(splitAndTrim(dto.getProfessorInterests()));
+                            profile.setInterests(interests);
+                        }
 
                         profile.setUser(user);
                         user.setProfessorProfile(profile);

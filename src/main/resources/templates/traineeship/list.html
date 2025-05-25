@@ -9,94 +9,86 @@
 <body>
 <section layout:fragment="content">
     <div class="container">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2>Available Traineeships</h2>
-            <div sec:authorize="hasRole('ROLE_COMPANY')">
-                <a th:href="@{/traineeships/create}" class="btn btn-primary">Create New Position</a>
-            </div>
-        </div>
-
-        <!-- Success Message -->
+        <!-- Alert Messages -->
         <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
             <span th:text="${success}">Success message</span>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-
-        <!-- Error Message -->
         <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
             <span th:text="${error}">Error message</span>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
 
-        <!-- Filters -->
-        <div class="card mb-4">
-            <div class="card-body">
-                <form th:action="@{/traineeships}" method="get" class="row g-3">
-                    <div class="col-md-4">
-                        <label for="location" class="form-label">Location</label>
-                        <input type="text" class="form-control" id="location" name="location" 
-                               th:value="${location}">
-                    </div>
-                    <div class="col-md-4">
-                        <label for="skill" class="form-label">Required Skill</label>
-                        <input type="text" class="form-control" id="skill" name="skill" 
-                               th:value="${skill}">
-                    </div>
-                    <div class="col-md-4">
-                        <label for="topic" class="form-label">Topic</label>
-                        <input type="text" class="form-control" id="topic" name="topic" 
-                               th:value="${topic}">
-                    </div>
-                    <div class="col-12">
-                        <button type="submit" class="btn btn-primary">Filter</button>
-                        <a th:href="@{/traineeships}" class="btn btn-outline-secondary">Clear Filters</a>
-                    </div>
-                </form>
+        <!-- Header with Create button for companies and Apply button for trainees -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Traineeship Positions</h1>
+            <div>
+                <a sec:authorize="hasRole('ROLE_COMPANY')" th:href="@{/traineeships/create}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Create New Position
+                </a>
+                <a sec:authorize="hasRole('ROLE_TRAINEE')" th:href="@{/traineeships/my-applications}" class="btn btn-info">
+                    <i class="bi bi-file-text"></i> My Applications
+                </a>
             </div>
         </div>
 
-        <!-- Traineeships List -->
-        <div class="row g-4">
-            <div th:each="traineeship : ${traineeships}" class="col-md-6">
+        <!-- Available Positions Header for Students -->
+        <div sec:authorize="hasRole('ROLE_TRAINEE')" class="mb-4">
+            <h2 class="h3">Available Positions</h2>
+            <p class="text-muted">Browse through the available traineeship positions below.</p>
+        </div>
+
+        <!-- Committee Header -->
+        <div sec:authorize="hasRole('ROLE_COMMITTEE')" class="mb-4">
+            <h2 class="h3">Traineeships Needing Supervisors</h2>
+            <p class="text-muted">These filled traineeships need to be assigned a supervising professor.</p>
+        </div>
+
+        <!-- Traineeship List -->
+        <div th:if="${traineeships.empty}" class="alert alert-info">
+            No traineeship positions available at the moment.
+        </div>
+
+        <div th:if="${!traineeships.empty}" class="row g-4">
+            <div th:each="traineeship : ${traineeships}" class="col-md-6 col-lg-4">
                 <div class="card h-100">
                     <div class="card-body">
-                        <h5 class="card-title">
-                            <span th:text="${traineeship.title}">Position Title</span>
-                            <small class="text-muted" th:text="'at ' + ${traineeship.companyName}">at Company Name</small>
-                        </h5>
-                        <h6 class="card-subtitle mb-2 text-muted" th:text="${traineeship.location}">Location</h6>
+                        <h5 class="card-title" th:text="${traineeship.title}">Position Title</h5>
+                        <h6 class="card-subtitle mb-2 text-muted" th:text="${traineeship.companyName}">Company Name</h6>
                         
-                        <p class="card-text" th:text="${traineeship.description}">Description</p>
+                        <div class="mb-2">
+                            <span th:if="${traineeship.status.name() == 'FILLED'}" class="badge bg-warning">Assigned</span>
+                            <span th:if="${traineeship.status.name() == 'OPEN'}" class="badge bg-success">Open</span>
+                            <span th:if="${traineeship.status.name() == 'COMPLETED'}" class="badge bg-info">Completed</span>
+                            <span th:if="${traineeship.status.name() == 'CANCELLED'}" class="badge bg-danger">Cancelled</span>
+                            <span th:if="${traineeship.supervisorName != null}" class="badge bg-primary">
+                                <i class="bi bi-person-check"></i> Supervised
+                            </span>
+                        </div>
                         
-                        <div class="mb-3">
-                            <strong>Required Skills:</strong>
+                        <p class="card-text">
+                            <i class="bi bi-geo-alt"></i> <span th:text="${traineeship.location}">Location</span><br>
+                            <i class="bi bi-calendar"></i> 
+                            <span th:text="${#temporals.format(traineeship.startDate, 'dd/MM/yyyy')}">01/01/2024</span> - 
+                            <span th:text="${#temporals.format(traineeship.endDate, 'dd/MM/yyyy')}">30/06/2024</span>
+                        </p>
+
+                        <div class="mb-2">
                             <span th:each="skill : ${traineeship.skillsRequired}" 
-                                  class="badge bg-primary me-1" th:text="${skill}">Skill</span>
+                                  class="badge bg-primary me-1 mb-1" th:text="${skill}">Skill</span>
                         </div>
-                        
-                        <div class="mb-3">
-                            <strong>Topics:</strong>
-                            <span th:each="topic : ${traineeship.topics}" 
-                                  class="badge bg-info me-1" th:text="${topic}">Topic</span>
-                        </div>
-                        
+
                         <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <small class="text-muted">
-                                    Start Date: <span th:text="${#temporals.format(traineeship.startDate, 'dd/MM/yyyy')}">01/01/2024</span>
-                                </small>
+                            <a th:href="@{/traineeships/{id}(id=${traineeship.id})}" class="btn btn-outline-primary">
+                                View Details
+                            </a>
+                            <div sec:authorize="hasRole('ROLE_COMPANY')" th:if="${traineeship.status.name() != 'FILLED'}">
+                                <a th:href="@{/traineeships/{id}/edit(id=${traineeship.id})}" class="btn btn-outline-secondary">
+                                    <i class="bi bi-pencil"></i> Edit
+                                </a>
                             </div>
-                            <a th:href="@{/traineeships/{id}(id=${traineeship.id})}" 
-                               class="btn btn-outline-primary">View Details</a>
                         </div>
                     </div>
-                </div>
-            </div>
-            
-            <!-- Empty State -->
-            <div th:if="${#lists.isEmpty(traineeships)}" class="col-12 text-center">
-                <div class="alert alert-info">
-                    No traineeships found matching your criteria.
                 </div>
             </div>
         </div>

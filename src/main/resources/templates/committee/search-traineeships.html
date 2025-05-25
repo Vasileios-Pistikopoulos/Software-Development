@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+    <title>Search Matching Traineeships - Committee</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <style>
+        .match-highlight {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 4px;
+            padding: 2px 6px;
+            margin: 2px;
+            display: inline-block;
+        }
+        .match-score {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #28a745;
+        }
+        .match-details {
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="container mt-4">
+        <h2>Search Matching Traineeships</h2>
+        
+        <!-- Alert Messages -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Search Filters -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Search Filters</h5>
+            </div>
+            <div class="card-body">
+                <form th:action="@{/committee/applications/{id}/search-traineeships(id=${applicationDto.id})}" method="get" class="row g-3">
+                    <div class="col-md-6">
+                        <label for="searchCriteria" class="form-label">Search Criteria</label>
+                        <select class="form-select" id="searchCriteria" name="searchCriteria">
+                            <option value="ALL" th:selected="${selectedCriteria == 'ALL'}">All Criteria (Weighted)</option>
+                            <option value="SKILLS" th:selected="${selectedCriteria == 'SKILLS'}">Skills Only</option>
+                            <option value="INTERESTS" th:selected="${selectedCriteria == 'INTERESTS'}">Interests Only</option>
+                            <option value="LOCATION" th:selected="${selectedCriteria == 'LOCATION'}">Location Only</option>
+                            <option value="SKILLS_AND_INTERESTS" th:selected="${selectedCriteria == 'SKILLS_AND_INTERESTS'}">Skills and Interests</option>
+                            <option value="SKILLS_AND_LOCATION" th:selected="${selectedCriteria == 'SKILLS_AND_LOCATION'}">Skills and Location</option>
+                            <option value="INTERESTS_AND_LOCATION" th:selected="${selectedCriteria == 'INTERESTS_AND_LOCATION'}">Interests and Location</option>
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary">Apply Filters</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Matching Traineeships -->
+        <h4 class="mb-3">Available Traineeships (Sorted by Relevance)</h4>
+        
+        <div th:if="${traineeshipsWithScores.empty}" class="alert alert-info">
+            No traineeships available.
+        </div>
+        
+        <div th:each="traineeshipInfo : ${traineeshipsWithScores}" class="card mb-3">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <h5 class="card-title" th:text="${traineeshipInfo.traineeship.title}">Traineeship Title</h5>
+                            <div class="match-score" th:text="${#numbers.formatDecimal(traineeshipInfo.score, 1, 1)} + ' points'">
+                                Score
+                            </div>
+                        </div>
+                        
+                        <div class="match-details">
+                            <div class="mb-2">
+                                <strong>Match Summary:</strong>
+                                <span th:if="${traineeshipInfo.matches.skillMatches > 0}" class="text-success">
+                                    <span th:text="${traineeshipInfo.matches.skillMatches}"></span> matching skills,
+                                </span>
+                                <span th:if="${traineeshipInfo.matches.interestMatches > 0}" class="text-success">
+                                    <span th:text="${traineeshipInfo.matches.interestMatches}"></span> matching interests,
+                                </span>
+                                <span th:if="${traineeshipInfo.matches.locationMatch}" class="text-success">
+                                    location match
+                                </span>
+                            </div>
+                            
+                            <div th:if="${!traineeshipInfo.matches.matchingSkills.empty}" class="mb-2">
+                                <strong>Matching Skills:</strong>
+                                <div class="mt-1">
+                                    <span th:each="skill : ${traineeshipInfo.matches.matchingSkills}" 
+                                          class="match-highlight" 
+                                          th:text="${skill}">Skill</span>
+                                </div>
+                            </div>
+                            
+                            <div th:if="${!traineeshipInfo.matches.matchingInterests.empty}" class="mb-2">
+                                <strong>Matching Interests:</strong>
+                                <div class="mt-1">
+                                    <span th:each="interest : ${traineeshipInfo.matches.matchingInterests}" 
+                                          class="match-highlight" 
+                                          th:text="${interest}">Interest</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <p class="card-text">
+                            <strong>Company:</strong> <span th:text="${traineeshipInfo.traineeship.companyName}"></span><br>
+                            <strong>Location:</strong> 
+                            <span th:text="${traineeshipInfo.traineeship.location}" 
+                                  th:classappend="${traineeshipInfo.matches.locationMatch ? 'match-highlight' : ''}">
+                                Location
+                            </span><br>
+                            <strong>Duration:</strong> 
+                            <span th:text="${#temporals.format(traineeshipInfo.traineeship.startDate, 'dd/MM/yyyy')}">01/01/2024</span> - 
+                            <span th:text="${#temporals.format(traineeshipInfo.traineeship.endDate, 'dd/MM/yyyy')}">30/06/2024</span>
+                        </p>
+                        
+                        <div class="mb-3">
+                            <strong>Required Skills:</strong>
+                            <div class="mt-1">
+                                <span th:each="skill : ${traineeshipInfo.traineeship.skillsRequired}" 
+                                      th:class="${traineeshipInfo.matches.matchingSkills.contains(skill) ? 'match-highlight' : 'badge bg-primary me-1'}"
+                                      th:text="${skill}">Skill</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <strong>Topics:</strong>
+                            <div class="mt-1">
+                                <span th:each="topic : ${traineeshipInfo.traineeship.topics}" 
+                                      th:class="${traineeshipInfo.matches.matchingInterests.contains(topic) ? 'match-highlight' : 'badge bg-info me-1'}"
+                                      th:text="${topic}">Topic</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <strong>Description:</strong>
+                            <p class="card-text" th:text="${traineeshipInfo.traineeship.description}"></p>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 text-right">
+                        <!-- Debug output -->
+                        <div th:if="${true}" style="display: none;">
+                            Debug - Application Object: <span th:text="${application}"></span><br/>
+                            Debug - Application ID: <span th:text="${application.id}"></span><br/>
+                            Debug - Application DTO: <span th:text="${applicationDto}"></span><br/>
+                            Debug - Application DTO ID: <span th:text="${applicationDto.id}"></span><br/>
+                            Debug - Traineeship ID: <span th:text="${traineeshipInfo.traineeship.id}"></span>
+                        </div>
+                        <form th:action="@{/committee/assign-traineeship}" 
+                              method="post" 
+                              class="d-inline">
+                            <input type="hidden" name="applicationId" th:value="${applicationDto.id}" />
+                            <input type="hidden" name="traineeshipId" th:value="${traineeshipInfo.traineeship.id}" />
+                            <button type="submit" class="btn btn-success">
+                                Assign Traineeship
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-3">
+            <a th:href="@{/committee/applications}" class="btn btn-secondary">
+                Back to Applications
+            </a>
+        </div>
+    </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

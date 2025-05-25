@@ -3,6 +3,9 @@ package _5336_4701_5281.swdeproj.model;
 import jakarta.persistence.*;
 import java.util.List;
 import java.util.Objects;
+import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
 
 @Entity
 @Table(name = "trainee_profiles")
@@ -21,12 +24,12 @@ public class TraineeProfile {
     @ElementCollection
     @CollectionTable(name = "trainee_interests", joinColumns = @JoinColumn(name = "trainee_id"))
     @Column(name = "interest")
-    private List<String> interests;
+    private Set<String> interests = new HashSet<>();
 
     @ElementCollection
     @CollectionTable(name = "trainee_skills", joinColumns = @JoinColumn(name = "trainee_id"))
     @Column(name = "skill")
-    private List<String> skills;
+    private Set<String> skills = new HashSet<>();
 
     private String preferredLocation;
 
@@ -35,20 +38,26 @@ public class TraineeProfile {
     private User user;
 
     @OneToMany(mappedBy = "trainee", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Application> applications;
+    private List<Application> applications = new ArrayList<>();
 
     @OneToMany(mappedBy = "assignedTrainee")
-    private List<Traineeship> assignedTraineeships;
+    private List<Traineeship> assignedTraineeships = new ArrayList<>();
 
     // === Constructors ===
 
-    public TraineeProfile() {}
+    public TraineeProfile() {
+        this.interests = new HashSet<>();
+        this.skills = new HashSet<>();
+        this.applications = new ArrayList<>();
+        this.assignedTraineeships = new ArrayList<>();
+    }
 
-    public TraineeProfile(String fullName, String studentId, List<String> interests, List<String> skills, String preferredLocation) {
+    public TraineeProfile(String fullName, String studentId, Set<String> interests, Set<String> skills, String preferredLocation) {
+        this();
         this.fullName = fullName;
         this.studentId = studentId;
-        this.interests = interests;
-        this.skills = skills;
+        this.interests = interests != null ? interests : new HashSet<>();
+        this.skills = skills != null ? skills : new HashSet<>();
         this.preferredLocation = preferredLocation;
     }
 
@@ -62,11 +71,11 @@ public class TraineeProfile {
     public String getStudentId() { return studentId; }
     public void setStudentId(String studentId) { this.studentId = studentId; }
 
-    public List<String> getInterests() { return interests; }
-    public void setInterests(List<String> interests) { this.interests = interests; }
+    public Set<String> getInterests() { return interests; }
+    public void setInterests(Set<String> interests) { this.interests = interests; }
 
-    public List<String> getSkills() { return skills; }
-    public void setSkills(List<String> skills) { this.skills = skills; }
+    public Set<String> getSkills() { return skills; }
+    public void setSkills(Set<String> skills) { this.skills = skills; }
 
     public String getPreferredLocation() { return preferredLocation; }
     public void setPreferredLocation(String preferredLocation) { this.preferredLocation = preferredLocation; }

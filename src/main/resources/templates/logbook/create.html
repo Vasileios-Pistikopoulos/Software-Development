@@ -11,16 +11,36 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-8">
+                <!-- Alert Messages -->
+                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <span th:text="${error}">Error message</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+
                 <div class="card">
                     <div class="card-header">
                         <h2 class="card-title mb-0">New Logbook Entry</h2>
                     </div>
                     <div class="card-body">
+                        <!-- Traineeship Info -->
+                        <div class="alert alert-info mb-4">
+                            <h5 class="alert-heading">Current Traineeship</h5>
+                            <p class="mb-0">
+                                <strong>Company:</strong> <span th:text="${activeTraineeship.company.name}">Company Name</span><br>
+                                <strong>Period:</strong> 
+                                <span th:text="${#temporals.format(activeTraineeship.startDate, 'dd/MM/yyyy')}">01/01/2024</span> - 
+                                <span th:text="${#temporals.format(activeTraineeship.endDate, 'dd/MM/yyyy')}">30/06/2024</span>
+                            </p>
+                        </div>
+
                         <form th:action="@{/logbook/create}" th:object="${logbookEntry}" method="post">
                             <div class="mb-3">
                                 <label for="date" class="form-label">Date</label>
                                 <input type="date" class="form-control" id="date" th:field="*{date}" 
-                                       th:max="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}" required>
+                                       th:min="${#temporals.format(activeTraineeship.startDate, 'yyyy-MM-dd')}"
+                                       th:max="${#temporals.format(activeTraineeship.endDate, 'yyyy-MM-dd')}"
+                                       required>
+                                <small class="form-text text-muted">Select a date within your traineeship period</small>
                             </div>
 
                             <div class="mb-3">
@@ -31,8 +51,8 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="tasksCompleted" class="form-label">Tasks Completed</label>
-                                <textarea class="form-control" id="tasksCompleted" th:field="*{tasksCompleted}" 
+                                <label for="taskDescription" class="form-label">Tasks Completed</label>
+                                <textarea class="form-control" id="taskDescription" th:field="*{taskDescription}" 
                                           rows="3" required></textarea>
                                 <small class="form-text text-muted">List the main tasks you completed today</small>
                             </div>
@@ -45,8 +65,8 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="description" class="form-label">Additional Notes</label>
-                                <textarea class="form-control" id="description" th:field="*{description}" 
+                                <label for="comments" class="form-label">Additional Notes</label>
+                                <textarea class="form-control" id="comments" th:field="*{comments}" 
                                           rows="3"></textarea>
                                 <small class="form-text text-muted">Any additional comments or observations (optional)</small>
                             </div>

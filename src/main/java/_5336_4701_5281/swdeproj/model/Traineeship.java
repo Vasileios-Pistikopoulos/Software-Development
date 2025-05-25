@@ -5,7 +5,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.AssertTrue;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -51,8 +53,23 @@ public class Traineeship {
     @JoinColumn(name = "supervisor_id")
     private ProfessorProfile  supervisor;
 
+    @OneToMany(mappedBy = "assignedTraineeship", cascade = CascadeType.ALL)
+    private List<Application> applications = new ArrayList<>();
+
+    @OneToOne(mappedBy = "traineeship", cascade = CascadeType.ALL)
+    private TraineeshipEvaluation evaluation;
+
     @Enumerated(EnumType.STRING)
     private Status status = Status.OPEN;
+
+    @Column(name = "completion_outcome")
+    private String completionOutcome;
+
+    @Column(name = "completion_comments", length = 1000)
+    private String completionComments;
+
+    @Column(name = "completion_date")
+    private LocalDate completionDate;
 
     @AssertTrue(message = "End date must be after start date")
     private boolean isEndDateValid() {
@@ -63,7 +80,7 @@ public class Traineeship {
     }
 
     public enum Status {
-        OPEN, CLOSED, FILLED
+        OPEN, FILLED, COMPLETED, CANCELLED
     }
 
     // Getters and Setters
@@ -155,6 +172,14 @@ public class Traineeship {
         this.supervisor = supervisor;
     }
 
+    public List<Application> getApplications() {
+        return applications;
+    }
+
+    public void setApplications(List<Application> applications) {
+        this.applications = applications;
+    }
+
     public Status getStatus() {
         return status;
     }
@@ -164,6 +189,42 @@ public class Traineeship {
     }
 
     public void complete() {
-        this.status = Status.CLOSED;
+        this.status = Status.COMPLETED;
+    }
+
+    public TraineeshipEvaluation getEvaluation() {
+        return evaluation;
+    }
+
+    public void setEvaluation(TraineeshipEvaluation evaluation) {
+        this.evaluation = evaluation;
+    }
+
+    public boolean hasEvaluation() {
+        return evaluation != null;
+    }
+
+    public String getCompletionOutcome() {
+        return completionOutcome;
+    }
+
+    public void setCompletionOutcome(String completionOutcome) {
+        this.completionOutcome = completionOutcome;
+    }
+
+    public String getCompletionComments() {
+        return completionComments;
+    }
+
+    public void setCompletionComments(String completionComments) {
+        this.completionComments = completionComments;
+    }
+
+    public LocalDate getCompletionDate() {
+        return completionDate;
+    }
+
+    public void setCompletionDate(LocalDate completionDate) {
+        this.completionDate = completionDate;
     }
 } 

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+    <title>My Applications</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="container">
+        <!-- Alert Messages -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${success}">Success message</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${error}">Error message</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>My Applications</h1>
+            <a th:href="@{/traineeships}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Traineeships
+            </a>
+        </div>
+
+        <!-- Applications List -->
+        <div th:if="${applications.empty}" class="alert alert-info">
+            You haven't submitted any applications yet.
+            <a th:href="@{/traineeships/apply}" class="alert-link">Submit an application</a>
+        </div>
+
+        <div th:if="${!applications.empty}" class="row">
+            <div th:each="app : ${applications}" class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">General Application</h5>
+                        
+                        <div class="mb-3">
+                            <span class="badge" 
+                                  th:classappend="${app.status != null && app.status.name() == 'PENDING' ? 'bg-warning' : 
+                                                  (app.status != null && app.status.name() == 'APPROVED' ? 'bg-success' : 
+                                                  (app.status != null && app.status.name() == 'REJECTED' ? 'bg-danger' : 'bg-secondary'))}"
+                                  th:text="${app.status}">Status</span>
+                        </div>
+
+                        <div class="mb-3">
+                            <strong>Skills:</strong>
+                            <div>
+                                <span th:each="skill : ${app.skills}" 
+                                      class="badge bg-primary me-1" 
+                                      th:text="${skill}">Skill</span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <strong>Interests:</strong>
+                            <div>
+                                <span th:each="interest : ${app.interests}" 
+                                      class="badge bg-info me-1" 
+                                      th:text="${interest}">Interest</span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <strong>Preferred Location:</strong>
+                            <span th:text="${app.preferredLocation}">Location</span>
+                        </div>
+
+                        <p class="card-text">
+                            <strong>Applied on:</strong> 
+                            <span th:text="${#temporals.format(app.applicationDate, 'dd/MM/yyyy')}">01/01/2024</span>
+                        </p>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <!-- Withdraw button for pending applications -->
+                            <form th:if="${app.status == T(_5336_4701_5281.swdeproj.model.Application.Status).PENDING}"
+                                  th:action="@{/traineeships/applications/{id}/withdraw(id=${app.id})}" 
+                                  method="post" style="display: inline;">
+                                <button type="submit" class="btn btn-outline-danger"
+                                        onclick="return confirm('Are you sure you want to withdraw this application?')">
+                                    Withdraw
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html> 

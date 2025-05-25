@@ -5,4 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TraineeProfileRepository extends JpaRepository<TraineeProfile, Long> {
     TraineeProfile findByUserId(Long userId);
+    TraineeProfile findByStudentId(String studentId);
 }

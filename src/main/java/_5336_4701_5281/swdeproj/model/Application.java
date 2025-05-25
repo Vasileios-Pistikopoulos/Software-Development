@@ -15,6 +15,7 @@ public class Application {
     private Long id;
 
     @NotNull(message = "Application date is required")
+    @Column(name = "application_date", nullable = false)
     private LocalDateTime applicationDate;
 
     @Column(columnDefinition = "TEXT")
@@ -23,21 +24,20 @@ public class Application {
     @Column(columnDefinition = "TEXT")
     private String comments;
 
-
     @ManyToOne
     @JoinColumn(name = "trainee_id", nullable = false)
     private TraineeProfile trainee;
 
     @ManyToOne
-    @JoinColumn(name = "traineeship_id", nullable = false)
-    private Traineeship traineeship;
-
+    @JoinColumn(name = "assigned_traineeship_id", nullable = true)
+    private Traineeship assignedTraineeship;
 
     @ManyToOne
     @JoinColumn(name = "supervisor_id")
     private User supervisor;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Status status = Status.PENDING;
 
     public enum Status {
@@ -50,9 +50,8 @@ public class Application {
 
     public Application() {}
 
-    public Application(TraineeProfile trainee, Traineeship traineeship) {
+    public Application(TraineeProfile trainee) {
         this.trainee = trainee;
-        this.traineeship = traineeship;
         this.status = Status.PENDING;
         this.applicationDate = LocalDateTime.now();
     }
@@ -75,8 +74,8 @@ public class Application {
     public TraineeProfile getTrainee() { return trainee; }
     public void setTrainee(TraineeProfile trainee) { this.trainee = trainee; }
 
-    public Traineeship getTraineeship() { return traineeship; }
-    public void setTraineeship(Traineeship traineeship) { this.traineeship = traineeship; }
+    public Traineeship getAssignedTraineeship() { return assignedTraineeship; }
+    public void setAssignedTraineeship(Traineeship assignedTraineeship) { this.assignedTraineeship = assignedTraineeship; }
 
     public User getSupervisor() { return supervisor; }
     public void setSupervisor(User supervisor) { this.supervisor = supervisor; }
