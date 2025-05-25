@@ -1,0 +1,429 @@
+@startuml
+class _5336_4701_5281.swdeproj.model.Application {
+- Long id
+- LocalDateTime applicationDate
+- String coverLetter
+- String comments
+- TraineeProfile trainee
+- Traineeship assignedTraineeship
+- User supervisor
+- Status status
++ Long getId()
++ void setId(Long)
++ LocalDateTime getApplicationDate()
++ void setApplicationDate(LocalDateTime)
++ String getCoverLetter()
++ void setCoverLetter(String)
++ String getComments()
++ void setComments(String)
++ TraineeProfile getTrainee()
++ void setTrainee(TraineeProfile)
++ Traineeship getAssignedTraineeship()
++ void setAssignedTraineeship(Traineeship)
++ User getSupervisor()
++ void setSupervisor(User)
++ Status getStatus()
++ void setStatus(Status)
++ boolean equals(Object)
++ int hashCode()
+}
+
+
+enum _5336_4701_5281.swdeproj.model.Status {
++  PENDING
++  APPROVED
++  REJECTED
+}
+
+class _5336_4701_5281.swdeproj.model.Evaluation {
+- Long id
+- LocalDate date
+- int motivationRating
+- int effectivenessRating
+- int efficiencyRating
+- int facilitiesRating
+- int guidanceRating
+- String comments
+- Traineeship traineeship
+- User evaluator
+- EvaluatorType evaluatorType
++ Long getId()
++ void setId(Long)
++ LocalDate getDate()
++ void setDate(LocalDate)
++ int getMotivationRating()
++ void setMotivationRating(int)
++ int getEffectivenessRating()
++ void setEffectivenessRating(int)
++ int getEfficiencyRating()
++ void setEfficiencyRating(int)
++ int getFacilitiesRating()
++ void setFacilitiesRating(int)
++ int getGuidanceRating()
++ void setGuidanceRating(int)
++ String getComments()
++ void setComments(String)
++ Traineeship getTraineeship()
++ void setTraineeship(Traineeship)
++ User getEvaluator()
++ void setEvaluator(User)
++ EvaluatorType getEvaluatorType()
++ void setEvaluatorType(EvaluatorType)
++ boolean equals(Object)
++ int hashCode()
+}
+
+
+enum _5336_4701_5281.swdeproj.model.EvaluatorType {
++  COMPANY
++  PROFESSOR
+}
+
+class _5336_4701_5281.swdeproj.model.CompanyProfile {
+- Long id
+- String companyName
+- String location
+- User user
+- Company company
++ Long getId()
++ String getCompanyName()
++ void setCompanyName(String)
++ String getLocation()
++ void setLocation(String)
++ User getUser()
++ void setUser(User)
++ Company getCompany()
++ void setCompany(Company)
++ boolean equals(Object)
++ int hashCode()
+}
+
+
+class _5336_4701_5281.swdeproj.model.LogbookEntry {
+- Long id
+- LocalDate date
+- String taskDescription
+- double hoursSpent
+- String learningOutcomes
+- String comments
+- User trainee
+- Traineeship traineeship
+- Status status
++ Long getId()
++ void setId(Long)
++ LocalDate getDate()
++ void setDate(LocalDate)
++ String getTaskDescription()
++ void setTaskDescription(String)
++ double getHoursSpent()
++ void setHoursSpent(double)
++ String getLearningOutcomes()
++ void setLearningOutcomes(String)
++ String getComments()
++ void setComments(String)
++ User getTrainee()
++ void setTrainee(User)
++ Traineeship getTraineeship()
++ void setTraineeship(Traineeship)
++ Status getStatus()
++ void setStatus(Status)
++ boolean equals(Object)
++ int hashCode()
+}
+
+
+enum _5336_4701_5281.swdeproj.model.Status {
++  PENDING
++  APPROVED
++  REJECTED
+}
+
+class _5336_4701_5281.swdeproj.model.Traineeship {
+- Long id
+- String title
+- String description
+- String location
+- Set<String> requiredSkills
+- Set<String> topics
+- LocalDate startDate
+- LocalDate endDate
+- Company company
+- TraineeProfile assignedTrainee
+- ProfessorProfile supervisor
+- List<Application> applications
+- TraineeshipEvaluation evaluation
+- Status status
+- String completionOutcome
+- String completionComments
+- LocalDate completionDate
+- boolean isEndDateValid()
++ Long getId()
++ void setId(Long)
++ String getTitle()
++ void setTitle(String)
++ String getDescription()
++ void setDescription(String)
++ String getLocation()
++ void setLocation(String)
++ Set<String> getRequiredSkills()
++ void setRequiredSkills(Set<String>)
++ Set<String> getTopics()
++ void setTopics(Set<String>)
++ LocalDate getStartDate()
++ void setStartDate(LocalDate)
++ LocalDate getEndDate()
++ void setEndDate(LocalDate)
++ Company getCompany()
++ void setCompany(Company)
++ TraineeProfile getAssignedTrainee()
++ void setAssignedTrainee(TraineeProfile)
++ ProfessorProfile getSupervisor()
++ void setSupervisor(ProfessorProfile)
++ List<Application> getApplications()
++ void setApplications(List<Application>)
++ Status getStatus()
++ void setStatus(Status)
++ void complete()
++ TraineeshipEvaluation getEvaluation()
++ void setEvaluation(TraineeshipEvaluation)
++ boolean hasEvaluation()
++ String getCompletionOutcome()
++ void setCompletionOutcome(String)
++ String getCompletionComments()
++ void setCompletionComments(String)
++ LocalDate getCompletionDate()
++ void setCompletionDate(LocalDate)
+}
+
+
+enum _5336_4701_5281.swdeproj.model.Status {
++  OPEN
++  FILLED
++  COMPLETED
++  CANCELLED
+}
+
+class _5336_4701_5281.swdeproj.model.TraineeshipEvaluation {
+- Long id
+- Traineeship traineeship
+- Integer studentMotivation
+- Integer studentEffectiveness
+- Integer studentEfficiency
+- Integer companyFacilities
+- Integer companyGuidance
+- String comments
+- LocalDateTime evaluationDate
++ Long getId()
++ void setId(Long)
++ Traineeship getTraineeship()
++ void setTraineeship(Traineeship)
++ Integer getStudentMotivation()
++ void setStudentMotivation(Integer)
++ Integer getStudentEffectiveness()
++ void setStudentEffectiveness(Integer)
++ Integer getStudentEfficiency()
++ void setStudentEfficiency(Integer)
++ Integer getCompanyFacilities()
++ void setCompanyFacilities(Integer)
++ Integer getCompanyGuidance()
++ void setCompanyGuidance(Integer)
++ String getComments()
++ void setComments(String)
++ LocalDateTime getEvaluationDate()
++ void setEvaluationDate(LocalDateTime)
++ double getAverageStudentRating()
++ double getAverageCompanyRating()
+}
+
+
+class _5336_4701_5281.swdeproj.model.TraineeProfile {
+- Long id
+- String fullName
+- String studentId
+- Set<String> interests
+- Set<String> skills
+- String preferredLocation
+- User user
+- List<Application> applications
+- List<Traineeship> assignedTraineeships
++ Long getId()
++ String getFullName()
++ void setFullName(String)
++ String getStudentId()
++ void setStudentId(String)
++ Set<String> getInterests()
++ void setInterests(Set<String>)
++ Set<String> getSkills()
++ void setSkills(Set<String>)
++ String getPreferredLocation()
++ void setPreferredLocation(String)
++ User getUser()
++ void setUser(User)
++ List<Application> getApplications()
++ void setApplications(List<Application>)
++ List<Traineeship> getAssignedTraineeships()
++ void setAssignedTraineeships(List<Traineeship>)
++ boolean equals(Object)
++ int hashCode()
+}
+
+
+class _5336_4701_5281.swdeproj.model.Company {
+- Long id
+- String name
+- String address
+- String email
+- String phone
+- String description
+- User user
+- Set<Traineeship> traineeships
+- CompanyProfile profile
++ Long getId()
++ void setId(Long)
++ String getName()
++ void setName(String)
++ String getAddress()
++ void setAddress(String)
++ String getEmail()
++ void setEmail(String)
++ String getPhone()
++ void setPhone(String)
++ String getDescription()
++ void setDescription(String)
++ User getUser()
++ void setUser(User)
++ Set<Traineeship> getTraineeships()
++ void setTraineeships(Set<Traineeship>)
++ CompanyProfile getProfile()
++ void setProfile(CompanyProfile)
+}
+
+
+class _5336_4701_5281.swdeproj.model.CommitteeProfile {
+- Long id
+- User user
++ Long getId()
++ User getUser()
++ void setUser(User)
+}
+
+
+class _5336_4701_5281.swdeproj.model.ProfessorProfile {
+- Long id
+- String fullName
+- Set<String> interests
+- User user
+- List<Traineeship> supervisedTraineeships
+- double loadScore
+- double interestScore
+- double suitabilityScore
++ Long getId()
++ String getFullName()
++ void setFullName(String)
++ Set<String> getInterests()
++ void setInterests(Set<String>)
++ User getUser()
++ void setUser(User)
++ List<Traineeship> getSupervisedTraineeships()
++ void setSupervisedTraineeships(List<Traineeship>)
++ double getLoadScore()
++ void setLoadScore(double)
++ double getInterestScore()
++ void setInterestScore(double)
++ double getSuitabilityScore()
++ void setSuitabilityScore(double)
++ boolean equals(Object)
++ int hashCode()
+}
+
+
+class _5336_4701_5281.swdeproj.model.Notification {
+- Long id
+- User user
+- String message
+- boolean isRead
+- LocalDateTime timestamp
+- NotificationType type
++ Long getId()
++ void setId(Long)
++ User getUser()
++ void setUser(User)
++ String getMessage()
++ void setMessage(String)
++ boolean isRead()
++ void setRead(boolean)
++ LocalDateTime getTimestamp()
++ void setTimestamp(LocalDateTime)
++ NotificationType getType()
++ void setType(NotificationType)
+}
+
+
+enum _5336_4701_5281.swdeproj.model.NotificationType {
++  APPLICATION_STATUS
++  LOGBOOK_STATUS
++  EVALUATION_SUBMITTED
+}
+
+class _5336_4701_5281.swdeproj.model.User {
+- Long id
+- String username
+- String password
+- String email
+- String fullName
+- Role role
+- Set<Role> roles
+- Set<LogbookEntry> logbookEntries
+- Set<Evaluation> evaluations
+- Set<Notification> notifications
+- TraineeProfile traineeProfile
+- CompanyProfile companyProfile
+- Company company
+- ProfessorProfile professorProfile
+- CommitteeProfile committeeProfile
++ Long getId()
++ String getUsername()
++ void setUsername(String)
++ String getEmail()
++ void setEmail(String)
++ String getPassword()
++ void setPassword(String)
++ String getFullName()
++ void setFullName(String)
++ Set<Role> getRoles()
++ void setRoles(Set<Role>)
++ void addRole(Role)
++ boolean hasRole(Role)
++ Set<Notification> getNotifications()
++ void setNotifications(Set<Notification>)
++ void addNotification(Notification)
++ void removeNotification(Notification)
++ TraineeProfile getTraineeProfile()
++ void setTraineeProfile(TraineeProfile)
++ CompanyProfile getCompanyProfile()
++ void setCompanyProfile(CompanyProfile)
++ Company getCompany()
++ void setCompany(Company)
++ ProfessorProfile getProfessorProfile()
++ void setProfessorProfile(ProfessorProfile)
++ CommitteeProfile getCommitteeProfile()
++ void setCommitteeProfile(CommitteeProfile)
++ Set<LogbookEntry> getLogbookEntries()
++ void setLogbookEntries(Set<LogbookEntry>)
++ Set<Evaluation> getEvaluations()
++ void setEvaluations(Set<Evaluation>)
++ Role getRole()
++ void setRole(Role)
++ boolean equals(Object)
++ int hashCode()
+}
+
+
+enum _5336_4701_5281.swdeproj.model.Role {
++  ROLE_TRAINEE
++  ROLE_COMPANY
++  ROLE_PROFESSOR
++  ROLE_COMMITTEE
+}
+
+@enduml

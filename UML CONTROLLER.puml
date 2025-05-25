@@ -1,0 +1,145 @@
+@startuml
+class _5336_4701_5281.swdeproj.controller.EvaluationController {
+- EvaluationRepository evaluationRepo
+- UserRepository userRepo
+- TraineeshipRepository traineeshipRepo
+- CompanyRepository companyRepo
+- ProfessorProfileRepository professorRepo
++ String listEvaluations(Model)
++ String showCreateForm(Long,Model)
++ String createEvaluation(Long,EvaluationDto,RedirectAttributes)
++ String showEditForm(Long,Model)
++ String updateEvaluation(Long,EvaluationDto,RedirectAttributes)
+}
+
+
+class _5336_4701_5281.swdeproj.controller.ProfessorController {
+- TraineeshipRepository traineeshipRepo
+- TraineeshipEvaluationRepository evaluationRepo
+- UserService userService
+- ProfessorProfileRepository professorRepo
+- EvaluationRepository evaluationRepository
++ String listSupervisedTraineeships(Model,Authentication)
++ String showEvaluationForm(Long,Model,Authentication)
++ String submitEvaluation(Long,Integer,Integer,Integer,Integer,Integer,String,Authentication,RedirectAttributes)
+- TraineeshipDto convertToDto(Traineeship)
+}
+
+
+class _5336_4701_5281.swdeproj.controller.UserController {
+- {static} Logger logger
+- UserRepository userRepository
+- TraineeProfileRepository traineeRepo
+- CompanyProfileRepository companyRepo
+- ProfessorProfileRepository professorRepo
+- CommitteeProfileRepository committeeRepo
+- BCryptPasswordEncoder passwordEncoder
++ String showLoginPage()
++ String showRegistrationForm(Model)
++ String registerUser(UserRegistrationDto,BindingResult,Model)
++ String testRegister()
+- List<String> splitAndTrim(String)
+}
+
+
+class _5336_4701_5281.swdeproj.controller.CommitteeController {
+- ApplicationRepository applicationRepo
+- TraineeshipRepository traineeshipRepo
+- UserRepository userRepo
+- EvaluationRepository evaluationRepo
+- LogbookEntryRepository logbookRepo
+- NotificationService notificationService
+- UserService userService
++ String listApplications(Model,Authentication)
++ String searchTraineeships(Long,String,Model,Authentication)
++ String assignTraineeship(String,String,RedirectAttributes,Authentication)
++ String viewOverview(Model)
++ String searchMatchingTraineeships(Long,String,String,Model,Authentication)
+- TraineeshipDto convertToDto(Traineeship)
+- ApplicationDto convertToDto(Application)
+}
+
+
+class _5336_4701_5281.swdeproj.controller.TraineeshipController {
+- TraineeshipRepository traineeshipRepo
+- ApplicationRepository applicationRepo
+- UserRepository userRepo
+- TraineeProfileRepository traineeRepo
+- CompanyRepository companyRepo
+- UserService userService
+- EvaluationRepository evaluationRepo
+- TraineeshipService traineeshipService
+- ProfessorProfileRepository professorRepo
++ String listTraineeships(Model,Authentication)
++ String viewTraineeship(Long,Model)
++ String showApplicationForm(Model,Authentication)
++ String submitApplication(String,String,String,String,RedirectAttributes,Authentication)
++ String showCreateForm(Model)
++ String createTraineeship(TraineeshipDto,RedirectAttributes)
++ String showEditForm(Long,Model)
++ String updateTraineeship(Long,TraineeshipDto,RedirectAttributes)
++ String deleteTraineeship(Long,RedirectAttributes)
++ String viewMyApplications(Model)
++ String withdrawApplication(Long,RedirectAttributes)
++ String showEvaluationForm(Long,Model,Authentication)
++ String submitEvaluation(Long,int,int,int,String,RedirectAttributes,Authentication)
++ String assignSupervisorForm(Long,Model)
++ String assignSupervisor(Long,Long,RedirectAttributes)
+- double calculateInterestMatchScore(Set<String>,Set<String>)
+- TraineeshipDto convertToDto(Traineeship)
++ String completeTraineeship(Long,String,String,RedirectAttributes,Authentication)
+}
+
+
+class _5336_4701_5281.swdeproj.controller.LogbookController {
+- LogbookEntryRepository logbookRepo
+- UserRepository userRepo
+- TraineeProfileRepository traineeRepo
+- TraineeshipRepository traineeshipRepo
++ String viewLogbook(LocalDate,LocalDate,String,Model,RedirectAttributes)
++ String showCreateForm(Model,RedirectAttributes)
++ String createEntry(LogbookEntry,RedirectAttributes)
++ String showEditForm(Long,Model)
++ String updateEntry(Long,LogbookEntry,RedirectAttributes)
++ String deleteEntry(Long,RedirectAttributes)
++ String approveEntry(Long,RedirectAttributes)
++ String rejectEntry(Long,String,RedirectAttributes)
++ String viewStatistics(Model)
+}
+
+
+class _5336_4701_5281.swdeproj.controller.HomeController {
+- {static} Logger logger
+- UserRepository userRepo
+- TraineeProfileRepository traineeRepo
+- TraineeshipRepository traineeshipRepo
++ void addAttributes(Model)
++ String home()
++ String homePage()
+}
+
+
+class _5336_4701_5281.swdeproj.controller.NotificationController {
+- NotificationService notificationService
+- UserService userService
++ ResponseEntity<List<Notification>> getUserNotifications(Authentication)
++ ResponseEntity<List<Notification>> getUnreadNotifications(Authentication)
++ ResponseEntity<Map<String,Long>> getUnreadNotificationCount(Authentication)
++ ResponseEntity<Void> markAsRead(Long,Authentication)
++ ResponseEntity<Void> markAllAsRead(Authentication)
+}
+
+
+class _5336_4701_5281.swdeproj.controller.CompanyController {
+- TraineeshipRepository traineeshipRepo
+- CompanyRepository companyRepo
+- UserRepository userRepo
+- EvaluationRepository evaluationRepo
+- UserService userService
++ String viewAssignedTraineeships(Model,Authentication)
++ String submitEvaluation(Long,Integer,Integer,Integer,Authentication,RedirectAttributes)
+- TraineeshipDto convertToDto(Traineeship)
+}
+
+
+@enduml

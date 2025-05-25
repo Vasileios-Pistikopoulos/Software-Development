@@ -1,0 +1,119 @@
+@startuml
+interface _5336_4701_5281.swdeproj.repository.CommitteeProfileRepository {
+~ CommitteeProfile findByUserId(Long)
+}
+
+interface _5336_4701_5281.swdeproj.repository.LogbookEntryRepository {
+~ List<LogbookEntry> findByTraineeId(Long)
+~ List<LogbookEntry> findByTraineeshipId(Long)
+~ List<LogbookEntry> findByTraineeIdAndDateBetween(Long,LocalDate,LocalDate)
+~ List<LogbookEntry> findByTraineeIdAndDateBetweenAndStatus(Long,LocalDate,LocalDate,LogbookEntry.Status)
+~ List<LogbookEntry> findByTraineeAndTraineeship(Long,Long)
+~ Double sumHoursByTraineeAndTraineeship(Long,Long)
+~ Double sumHoursByTraineeAndTraineeshipAndStatus(Long,Long,LogbookEntry.Status)
+~ Long countApprovedEntriesByTraineeAndTraineeship(Long,Long,LogbookEntry.Status)
+~ long countByTraineeId(Long)
+}
+
+interface _5336_4701_5281.swdeproj.repository.NotificationRepository {
+~ List<Notification> findByUserOrderByTimestampDesc(User)
+~ List<Notification> findByUserAndIsReadOrderByTimestampDesc(User,boolean)
+~ long countUnreadNotifications(User)
+}
+
+interface _5336_4701_5281.swdeproj.repository.CompanyProfileRepository {
+~ CompanyProfile findByUserId(Long)
+}
+
+interface _5336_4701_5281.swdeproj.repository.CompanyRepository {
+~ Company findByUserId(Long)
+}
+
+interface _5336_4701_5281.swdeproj.repository.EvaluationRepository {
+~ List<Evaluation> findByTraineeshipId(Long)
+~ Optional<Evaluation> findByTraineeshipIdAndEvaluatorType(Long,EvaluatorType)
+~ Optional<Double> findAverageMotivationRating()
+~ Optional<Double> findAverageEffectivenessRating()
+~ Optional<Double> findAverageEfficiencyRating()
+~ Optional<Double> getAverageMotivationForCompany(Long)
+~ Optional<Double> getAverageEffectivenessForCompany(Long)
+~ Optional<Double> getAverageEfficiencyForCompany(Long)
+~ Optional<Double> getAverageFacilitiesForCompany(Long)
+~ Optional<Double> getAverageGuidanceForCompany(Long)
+~ long countByEvaluatorType(EvaluatorType)
+~ List<Evaluation> findTop5ByOrderByDateDesc()
+}
+
+interface _5336_4701_5281.swdeproj.repository.ProfessorProfileRepository {
+~ ProfessorProfile findByUserId(Long)
+}
+
+interface _5336_4701_5281.swdeproj.repository.TraineeProfileRepository {
+~ TraineeProfile findByUserId(Long)
+~ TraineeProfile findByStudentId(String)
+}
+
+interface _5336_4701_5281.swdeproj.repository.ApplicationRepository {
+~ List<Application> findByTraineeId(Long)
+~ List<Application> findByAssignedTraineeshipId(Long)
+~ List<Application> findByTraineeIdAndStatus(Long,Application.Status)
+~ List<Application> findByAssignedTraineeshipIdAndStatus(Long,Application.Status)
+~ List<Application> findByStatus(Application.Status)
+~ List<Application> findByTraineeIdOrderByApplicationDateDesc(Long)
+~ List<Application> findByTraineeIdAndDateRange(Long,LocalDateTime,LocalDateTime)
+~ Optional<Application> findByIdWithTrainee(Long)
+~ Optional<Application> findByIdWithTraineeAndCollections(Long)
+~ long countByTraineeIdAndStatus(Long,Application.Status)
+~ long countByAssignedTraineeshipCompanyIdAndStatus(Long,Application.Status)
+~ long countByStatus(Application.Status)
+~ Optional<Application> findByTraineeIdAndAssignedTraineeshipId(Long,Long)
+~ List<Application> findTop5ByOrderByApplicationDateDesc()
+}
+
+interface _5336_4701_5281.swdeproj.repository.TraineeshipEvaluationRepository {
+~ Optional<TraineeshipEvaluation> findByTraineeshipId(Long)
+~ boolean existsByTraineeshipId(Long)
+}
+
+interface _5336_4701_5281.swdeproj.repository.TraineeshipRepository {
+~ List<Traineeship> findByLocation(String)
+~ List<Traineeship> findByStatus(Traineeship.Status)
+~ List<Traineeship> findByRequiredSkill(String)
+~ List<Traineeship> findByTopic(String)
+~ List<Traineeship> findByCompanyId(Long)
+~ List<Traineeship> findByFilters(String,String,String)
+~ long countByStatus(Traineeship.Status)
+~ long countByCompanyIdAndAssignedTraineeIsNull(Long)
+~ long countByCompanyIdAndAssignedTraineeIsNotNull(Long)
+~ long countBySupervisorId(Long)
+~ long countBySupervisorIdAndEvaluationNotSubmitted(Long)
+~ long countDistinctTraineesBySupervisorId(Long)
+~ long countByAssignedTraineeIsNotNull()
+~ Traineeship findFirstByAssignedTraineeIdOrderByStartDateDesc(Long)
+~ List<Traineeship> findByCompanyIdAndAssignedTraineeIsNotNull(Long)
+~ List<Traineeship> findBySupervisorId(Long)
+~ List<Traineeship> findByStatusWithCollections(Traineeship.Status)
+~ List<Traineeship> findByStatusAndSupervisorIsNull(Traineeship.Status)
+}
+
+interface _5336_4701_5281.swdeproj.repository.UserRepository {
+~ Optional<User> findByEmail(String)
+~ Optional<User> findByUsername(String)
+~ List<User> findByRolesContaining(User.Role)
+}
+
+
+
+org.springframework.data.jpa.repository.JpaRepository <|-- _5336_4701_5281.swdeproj.repository.CommitteeProfileRepository
+org.springframework.data.jpa.repository.JpaRepository <|-- _5336_4701_5281.swdeproj.repository.LogbookEntryRepository
+org.springframework.data.jpa.repository.JpaRepository <|-- _5336_4701_5281.swdeproj.repository.NotificationRepository
+org.springframework.data.jpa.repository.JpaRepository <|-- _5336_4701_5281.swdeproj.repository.CompanyProfileRepository
+org.springframework.data.jpa.repository.JpaRepository <|-- _5336_4701_5281.swdeproj.repository.CompanyRepository
+org.springframework.data.jpa.repository.JpaRepository <|-- _5336_4701_5281.swdeproj.repository.EvaluationRepository
+org.springframework.data.jpa.repository.JpaRepository <|-- _5336_4701_5281.swdeproj.repository.ProfessorProfileRepository
+org.springframework.data.jpa.repository.JpaRepository <|-- _5336_4701_5281.swdeproj.repository.TraineeProfileRepository
+org.springframework.data.jpa.repository.JpaRepository <|-- _5336_4701_5281.swdeproj.repository.ApplicationRepository
+org.springframework.data.jpa.repository.JpaRepository <|-- _5336_4701_5281.swdeproj.repository.TraineeshipEvaluationRepository
+org.springframework.data.jpa.repository.JpaRepository <|-- _5336_4701_5281.swdeproj.repository.TraineeshipRepository
+org.springframework.data.jpa.repository.JpaRepository <|-- _5336_4701_5281.swdeproj.repository.UserRepository
+@enduml
