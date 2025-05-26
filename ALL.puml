@@ -1,0 +1,1041 @@
+@startuml
+interface _5336_4701_5281.swdeproj.repository.NotificationRepository {
+~ List<Notification> findByUserOrderByTimestampDesc(User)
+~ List<Notification> findByUserAndIsReadOrderByTimestampDesc(User,boolean)
+~ long countUnreadNotifications(User)
+}
+
+interface _5336_4701_5281.swdeproj.repository.CompanyProfileRepository {
+~ CompanyProfile findByUserId(Long)
+}
+
+class _5336_4701_5281.swdeproj.model.CompanyProfile {
+- Long id
+- String companyName
+- String location
+- User user
+- Company company
++ Long getId()
++ String getCompanyName()
++ void setCompanyName(String)
++ String getLocation()
++ void setLocation(String)
++ User getUser()
++ void setUser(User)
++ Company getCompany()
++ void setCompany(Company)
++ boolean equals(Object)
++ int hashCode()
+}
+
+
+class _5336_4701_5281.swdeproj.model.LogbookEntry {
+- Long id
+- LocalDate date
+- String taskDescription
+- double hoursSpent
+- String learningOutcomes
+- String comments
+- User trainee
+- Traineeship traineeship
+- Status status
++ Long getId()
++ void setId(Long)
++ LocalDate getDate()
++ void setDate(LocalDate)
++ String getTaskDescription()
++ void setTaskDescription(String)
++ double getHoursSpent()
++ void setHoursSpent(double)
++ String getLearningOutcomes()
++ void setLearningOutcomes(String)
++ String getComments()
++ void setComments(String)
++ User getTrainee()
++ void setTrainee(User)
++ Traineeship getTraineeship()
++ void setTraineeship(Traineeship)
++ Status getStatus()
++ void setStatus(Status)
++ boolean equals(Object)
++ int hashCode()
+}
+
+
+enum _5336_4701_5281.swdeproj.model.Status {
++  PENDING
++  APPROVED
++  REJECTED
+}
+
+class _5336_4701_5281.swdeproj.model.Traineeship {
+- Long id
+- String title
+- String description
+- String location
+- Set<String> requiredSkills
+- Set<String> topics
+- LocalDate startDate
+- LocalDate endDate
+- Company company
+- TraineeProfile assignedTrainee
+- ProfessorProfile supervisor
+- List<Application> applications
+- CompanyEvaluation companyEvaluation
+- ProfessorEvaluation professorEvaluation
+- Status status
+- String completionOutcome
+- String completionComments
+- LocalDate completionDate
+- boolean isEndDateValid()
++ Long getId()
++ void setId(Long)
++ String getTitle()
++ void setTitle(String)
++ String getDescription()
++ void setDescription(String)
++ String getLocation()
++ void setLocation(String)
++ Set<String> getRequiredSkills()
++ void setRequiredSkills(Set<String>)
++ Set<String> getTopics()
++ void setTopics(Set<String>)
++ LocalDate getStartDate()
++ void setStartDate(LocalDate)
++ LocalDate getEndDate()
++ void setEndDate(LocalDate)
++ Company getCompany()
++ void setCompany(Company)
++ TraineeProfile getAssignedTrainee()
++ void setAssignedTrainee(TraineeProfile)
++ ProfessorProfile getSupervisor()
++ void setSupervisor(ProfessorProfile)
++ List<Application> getApplications()
++ void setApplications(List<Application>)
++ Status getStatus()
++ void setStatus(Status)
++ void complete()
++ boolean hasCompanyEvaluation()
++ boolean hasProfessorEvaluation()
++ boolean hasBothEvaluations()
++ CompanyEvaluation getCompanyEvaluation()
++ void setCompanyEvaluation(CompanyEvaluation)
++ ProfessorEvaluation getProfessorEvaluation()
++ void setProfessorEvaluation(ProfessorEvaluation)
++ String getCompletionOutcome()
++ void setCompletionOutcome(String)
++ String getCompletionComments()
++ void setCompletionComments(String)
++ LocalDate getCompletionDate()
++ void setCompletionDate(LocalDate)
+}
+
+
+enum _5336_4701_5281.swdeproj.model.Status {
++  OPEN
++  FILLED
++  COMPLETED
++  CANCELLED
+}
+
+class _5336_4701_5281.swdeproj.dto.EvaluationDto {
+- Long id
+- Long traineeshipId
+- String traineeName
+- String companyName
+- EvaluatorType evaluatorType
+- Integer motivation
+- Integer effectiveness
+- Integer efficiency
+- Integer facilities
+- Integer guidance
++ Long getId()
++ void setId(Long)
++ Long getTraineeshipId()
++ void setTraineeshipId(Long)
++ String getTraineeName()
++ void setTraineeName(String)
++ String getCompanyName()
++ void setCompanyName(String)
++ EvaluatorType getEvaluatorType()
++ void setEvaluatorType(EvaluatorType)
++ Integer getMotivation()
++ void setMotivation(Integer)
++ Integer getEffectiveness()
++ void setEffectiveness(Integer)
++ Integer getEfficiency()
++ void setEfficiency(Integer)
++ Integer getFacilities()
++ void setFacilities(Integer)
++ Integer getGuidance()
++ void setGuidance(Integer)
+}
+
+
+interface _5336_4701_5281.swdeproj.repository.ProfessorProfileRepository {
+~ ProfessorProfile findByUserId(Long)
+}
+
+class _5336_4701_5281.swdeproj.controller.EvaluationController {
+- EvaluationRepository evaluationRepo
+- UserRepository userRepo
+- TraineeshipRepository traineeshipRepo
+- CompanyRepository companyRepo
+- ProfessorProfileRepository professorRepo
++ String listEvaluations(Model)
++ String showCreateForm(Long,Model)
++ String createEvaluation(Long,EvaluationDto,RedirectAttributes)
++ String showEditForm(Long,Model)
++ String updateEvaluation(Long,EvaluationDto,RedirectAttributes)
+}
+
+
+interface _5336_4701_5281.swdeproj.repository.EvaluationRepository {
+~ List<Evaluation> findByTraineeshipId(Long)
+~ Optional<Evaluation> findByTraineeshipIdAndEvaluatorType(Long,EvaluatorType)
+~ Optional<Double> findAverageMotivationRating()
+~ Optional<Double> findAverageEffectivenessRating()
+~ Optional<Double> findAverageEfficiencyRating()
+~ Optional<Double> getAverageMotivationForCompany(Long)
+~ Optional<Double> getAverageEffectivenessForCompany(Long)
+~ Optional<Double> getAverageEfficiencyForCompany(Long)
+~ Optional<Double> getAverageFacilitiesForCompany(Long)
+~ Optional<Double> getAverageGuidanceForCompany(Long)
+~ long countByEvaluatorType(EvaluatorType)
+~ List<Evaluation> findTop5ByOrderByDateDesc()
+}
+
+class _5336_4701_5281.swdeproj.model.ProfessorEvaluation {
+- Long id
+- Traineeship traineeship
+- Integer studentMotivation
+- Integer studentEffectiveness
+- Integer studentEfficiency
+- Integer companyFacilities
+- Integer companyGuidance
+- String comments
+- LocalDateTime evaluationDate
++ Long getId()
++ void setId(Long)
++ Traineeship getTraineeship()
++ void setTraineeship(Traineeship)
++ Integer getStudentMotivation()
++ void setStudentMotivation(Integer)
++ Integer getStudentEffectiveness()
++ void setStudentEffectiveness(Integer)
++ Integer getStudentEfficiency()
++ void setStudentEfficiency(Integer)
++ Integer getCompanyFacilities()
++ void setCompanyFacilities(Integer)
++ Integer getCompanyGuidance()
++ void setCompanyGuidance(Integer)
++ String getComments()
++ void setComments(String)
++ LocalDateTime getEvaluationDate()
++ void setEvaluationDate(LocalDateTime)
++ double getAverageStudentRating()
++ double getAverageCompanyRating()
+}
+
+
+class _5336_4701_5281.swdeproj.config.SecurityConfig {
+- {static} Logger logger
+- UserDetailsServiceImpl userDetailsServiceImpl
++ UserDetailsService userDetailsService()
++ BCryptPasswordEncoder passwordEncoder()
++ SecurityFilterChain securityFilterChain(HttpSecurity)
++ DaoAuthenticationProvider authenticationProvider()
+}
+
+
+interface _5336_4701_5281.swdeproj.repository.TraineeshipEvaluationRepository {
+~ Optional<TraineeshipEvaluation> findByTraineeshipId(Long)
+~ boolean existsByTraineeshipId(Long)
+}
+
+interface _5336_4701_5281.swdeproj.repository.UserRepository {
+~ Optional<User> findByEmail(String)
+~ Optional<User> findByUsername(String)
+~ List<User> findByRolesContaining(User.Role)
+}
+
+interface _5336_4701_5281.swdeproj.repository.CommitteeProfileRepository {
+~ CommitteeProfile findByUserId(Long)
+}
+
+interface _5336_4701_5281.swdeproj.repository.CompanyRepository {
+~ Company findByUserId(Long)
+}
+
+interface _5336_4701_5281.swdeproj.repository.TraineeProfileRepository {
+~ TraineeProfile findByUserId(Long)
+~ TraineeProfile findByStudentId(String)
+}
+
+class _5336_4701_5281.swdeproj.model.CompanyEvaluation {
+- Long id
+- Traineeship traineeship
+- Integer studentMotivation
+- Integer studentEffectiveness
+- Integer studentEfficiency
+- String comments
+- LocalDateTime evaluationDate
++ Long getId()
++ void setId(Long)
++ Traineeship getTraineeship()
++ void setTraineeship(Traineeship)
++ Integer getStudentMotivation()
++ void setStudentMotivation(Integer)
++ Integer getStudentEffectiveness()
++ void setStudentEffectiveness(Integer)
++ Integer getStudentEfficiency()
++ void setStudentEfficiency(Integer)
++ String getComments()
++ void setComments(String)
++ LocalDateTime getEvaluationDate()
++ void setEvaluationDate(LocalDateTime)
++ double getAverageStudentRating()
+}
+
+
+interface _5336_4701_5281.swdeproj.repository.ApplicationRepository {
+~ List<Application> findByTraineeId(Long)
+~ List<Application> findByAssignedTraineeshipId(Long)
+~ List<Application> findByTraineeIdAndStatus(Long,Application.Status)
+~ List<Application> findByAssignedTraineeshipIdAndStatus(Long,Application.Status)
+~ List<Application> findByStatus(Application.Status)
+~ List<Application> findByTraineeIdOrderByApplicationDateDesc(Long)
+~ List<Application> findByTraineeIdAndDateRange(Long,LocalDateTime,LocalDateTime)
+~ Optional<Application> findByIdWithTrainee(Long)
+~ Optional<Application> findByIdWithTraineeAndCollections(Long)
+~ long countByTraineeIdAndStatus(Long,Application.Status)
+~ long countByAssignedTraineeshipCompanyIdAndStatus(Long,Application.Status)
+~ long countByStatus(Application.Status)
+~ Optional<Application> findByTraineeIdAndAssignedTraineeshipId(Long,Long)
+~ List<Application> findTop5ByOrderByApplicationDateDesc()
+}
+
+class _5336_4701_5281.swdeproj.model.TraineeProfile {
+- Long id
+- String fullName
+- String studentId
+- Set<String> interests
+- Set<String> skills
+- String preferredLocation
+- User user
+- List<Application> applications
+- List<Traineeship> assignedTraineeships
++ Long getId()
++ String getFullName()
++ void setFullName(String)
++ String getStudentId()
++ void setStudentId(String)
++ Set<String> getInterests()
++ void setInterests(Set<String>)
++ Set<String> getSkills()
++ void setSkills(Set<String>)
++ String getPreferredLocation()
++ void setPreferredLocation(String)
++ User getUser()
++ void setUser(User)
++ List<Application> getApplications()
++ void setApplications(List<Application>)
++ List<Traineeship> getAssignedTraineeships()
++ void setAssignedTraineeships(List<Traineeship>)
++ boolean equals(Object)
++ int hashCode()
+}
+
+
+class _5336_4701_5281.swdeproj.model.ProfessorProfile {
+- Long id
+- String fullName
+- Set<String> interests
+- User user
+- List<Traineeship> supervisedTraineeships
+- double loadScore
+- double interestScore
+- double suitabilityScore
++ Long getId()
++ String getFullName()
++ void setFullName(String)
++ Set<String> getInterests()
++ void setInterests(Set<String>)
++ User getUser()
++ void setUser(User)
++ List<Traineeship> getSupervisedTraineeships()
++ void setSupervisedTraineeships(List<Traineeship>)
++ double getLoadScore()
++ void setLoadScore(double)
++ double getInterestScore()
++ void setInterestScore(double)
++ double getSuitabilityScore()
++ void setSuitabilityScore(double)
++ boolean equals(Object)
++ int hashCode()
+}
+
+
+class _5336_4701_5281.swdeproj.controller.HomeController {
+- {static} Logger logger
+- UserRepository userRepo
+- TraineeProfileRepository traineeRepo
+- TraineeshipRepository traineeshipRepo
++ void addAttributes(Model)
++ String home()
++ String homePage()
+}
+
+
+interface _5336_4701_5281.swdeproj.repository.TraineeshipRepository {
+~ List<Traineeship> findByLocation(String)
+~ List<Traineeship> findByStatus(Traineeship.Status)
+~ List<Traineeship> findByRequiredSkill(String)
+~ List<Traineeship> findByTopic(String)
+~ List<Traineeship> findByCompanyId(Long)
+~ List<Traineeship> findByFilters(String,String,String)
+~ long countByStatus(Traineeship.Status)
+~ long countByCompanyIdAndAssignedTraineeIsNull(Long)
+~ long countByCompanyIdAndAssignedTraineeIsNotNull(Long)
+~ long countBySupervisorId(Long)
+~ long countBySupervisorIdAndEvaluationNotSubmitted(Long)
+~ long countDistinctTraineesBySupervisorId(Long)
+~ long countByAssignedTraineeIsNotNull()
+~ Traineeship findFirstByAssignedTraineeIdOrderByStartDateDesc(Long)
+~ List<Traineeship> findByCompanyIdAndAssignedTraineeIsNotNull(Long)
+~ List<Traineeship> findBySupervisorId(Long)
+~ List<Traineeship> findByStatusWithCollections(Traineeship.Status)
+~ List<Traineeship> findByStatusAndSupervisorIsNull(Traineeship.Status)
+}
+
+class _5336_4701_5281.swdeproj.model.Application {
+- Long id
+- LocalDateTime applicationDate
+- String coverLetter
+- String comments
+- TraineeProfile trainee
+- Traineeship assignedTraineeship
+- User supervisor
+- Status status
++ Long getId()
++ void setId(Long)
++ LocalDateTime getApplicationDate()
++ void setApplicationDate(LocalDateTime)
++ String getCoverLetter()
++ void setCoverLetter(String)
++ String getComments()
++ void setComments(String)
++ TraineeProfile getTrainee()
++ void setTrainee(TraineeProfile)
++ Traineeship getAssignedTraineeship()
++ void setAssignedTraineeship(Traineeship)
++ User getSupervisor()
++ void setSupervisor(User)
++ Status getStatus()
++ void setStatus(Status)
++ boolean equals(Object)
++ int hashCode()
+}
+
+
+enum _5336_4701_5281.swdeproj.model.Status {
++  PENDING
++  APPROVED
++  REJECTED
+}
+
+class _5336_4701_5281.swdeproj.model.Evaluation {
+- Long id
+- LocalDate date
+- int motivationRating
+- int effectivenessRating
+- int efficiencyRating
+- int facilitiesRating
+- int guidanceRating
+- String comments
+- Traineeship traineeship
+- User evaluator
+- EvaluatorType evaluatorType
++ Long getId()
++ void setId(Long)
++ LocalDate getDate()
++ void setDate(LocalDate)
++ int getMotivationRating()
++ void setMotivationRating(int)
++ int getEffectivenessRating()
++ void setEffectivenessRating(int)
++ int getEfficiencyRating()
++ void setEfficiencyRating(int)
++ int getFacilitiesRating()
++ void setFacilitiesRating(int)
++ int getGuidanceRating()
++ void setGuidanceRating(int)
++ String getComments()
++ void setComments(String)
++ Traineeship getTraineeship()
++ void setTraineeship(Traineeship)
++ User getEvaluator()
++ void setEvaluator(User)
++ EvaluatorType getEvaluatorType()
++ void setEvaluatorType(EvaluatorType)
++ boolean equals(Object)
++ int hashCode()
+}
+
+
+enum _5336_4701_5281.swdeproj.model.EvaluatorType {
++  COMPANY
++  PROFESSOR
+}
+
+class _5336_4701_5281.swdeproj.dto.ApplicationDto {
+- Long id
+- LocalDateTime applicationDate
+- String coverLetter
+- String comments
+- Application.Status status
+- String traineeName
+- String studentId
+- TraineeshipDto traineeship
+- List<String> skills
+- List<String> interests
+- String preferredLocation
++ Long getId()
++ void setId(Long)
++ LocalDateTime getApplicationDate()
++ void setApplicationDate(LocalDateTime)
++ String getCoverLetter()
++ void setCoverLetter(String)
++ String getComments()
++ void setComments(String)
++ Application.Status getStatus()
++ void setStatus(Application.Status)
++ String getTraineeName()
++ void setTraineeName(String)
++ String getStudentId()
++ void setStudentId(String)
++ TraineeshipDto getTraineeship()
++ void setTraineeship(TraineeshipDto)
++ List<String> getSkills()
++ void setSkills(List<String>)
++ List<String> getInterests()
++ void setInterests(List<String>)
++ String getPreferredLocation()
++ void setPreferredLocation(String)
+}
+
+
+class _5336_4701_5281.swdeproj.service.UserDetailsServiceImpl {
+- UserRepository userRepository
++ UserDetails loadUserByUsername(String)
+}
+
+
+class _5336_4701_5281.swdeproj.service.UserService {
+- UserRepository userRepository
+- BCryptPasswordEncoder passwordEncoder
++ boolean emailExists(String)
++ User registerUser(String,String,String,String)
++ User getCurrentUser(Authentication)
+}
+
+
+class _5336_4701_5281.swdeproj.controller.ProfessorController {
+- TraineeshipRepository traineeshipRepo
+- TraineeshipEvaluationRepository evaluationRepo
+- UserService userService
+- ProfessorProfileRepository professorRepo
+- EvaluationRepository evaluationRepository
++ String listSupervisedTraineeships(Model,Authentication)
++ String showEvaluationForm(Long,Model,Authentication)
++ String submitEvaluation(Long,Integer,Integer,Integer,Integer,Integer,String,Authentication,RedirectAttributes)
++ String submitEvaluation(Long,TraineeshipDto)
+- TraineeshipDto convertToDto(Traineeship)
+}
+
+
+class _5336_4701_5281.swdeproj.controller.TraineeshipController {
+- TraineeshipRepository traineeshipRepo
+- ApplicationRepository applicationRepo
+- UserRepository userRepo
+- TraineeProfileRepository traineeRepo
+- CompanyRepository companyRepo
+- UserService userService
+- EvaluationRepository evaluationRepo
+- TraineeshipService traineeshipService
+- ProfessorProfileRepository professorRepo
++ String listTraineeships(Model,Authentication)
++ String viewTraineeship(Long,Model)
++ String showApplicationForm(Model,Authentication)
++ String submitApplication(String,String,String,String,RedirectAttributes,Authentication)
++ String showCreateForm(Model)
++ String createTraineeship(TraineeshipDto,RedirectAttributes)
++ String showEditForm(Long,Model)
++ String updateTraineeship(Long,TraineeshipDto,RedirectAttributes)
++ String deleteTraineeship(Long,RedirectAttributes)
++ String viewMyApplications(Model)
++ String withdrawApplication(Long,RedirectAttributes)
++ String assignSupervisorForm(Long,Model)
++ String assignSupervisor(Long,Long,RedirectAttributes)
+- double calculateInterestMatchScore(Set<String>,Set<String>)
+- TraineeshipDto convertToDto(Traineeship)
++ String completeTraineeship(Long,String,String,Authentication,RedirectAttributes)
+}
+
+
+class _5336_4701_5281.swdeproj.model.CommitteeProfile {
+- Long id
+- User user
++ Long getId()
++ User getUser()
++ void setUser(User)
+}
+
+
+class _5336_4701_5281.swdeproj.controller.LogbookController {
+- LogbookEntryRepository logbookRepo
+- UserRepository userRepo
+- TraineeProfileRepository traineeRepo
+- TraineeshipRepository traineeshipRepo
++ String viewLogbook(Model,RedirectAttributes)
++ String showCreateForm(Model,RedirectAttributes)
++ String createEntry(LogbookEntry,RedirectAttributes)
++ String showEditForm(Long,Model)
++ String updateEntry(Long,LogbookEntry,RedirectAttributes)
++ String deleteEntry(Long,RedirectAttributes)
++ String approveEntry(Long,RedirectAttributes)
++ String rejectEntry(Long,String,RedirectAttributes)
++ String viewStatistics(Model)
+}
+
+
+class _5336_4701_5281.swdeproj.controller.NotificationController {
+- NotificationService notificationService
+- UserService userService
++ ResponseEntity<List<Notification>> getUserNotifications(Authentication)
++ ResponseEntity<List<Notification>> getUnreadNotifications(Authentication)
++ ResponseEntity<Map<String,Long>> getUnreadNotificationCount(Authentication)
++ ResponseEntity<Void> markAsRead(Long,Authentication)
++ ResponseEntity<Void> markAllAsRead(Authentication)
+}
+
+
+class _5336_4701_5281.swdeproj.service.TraineeshipService {
+- ProfessorProfileRepository professorRepo
+- TraineeshipRepository traineeshipRepo
++ List<ProfessorProfile> findSuitableProfessors(Traineeship)
+- double calculateInterestScore(ProfessorProfile,Traineeship)
+- double calculateLoadScore(long)
++ void assignSupervisor(Long,Long)
++ Traineeship getTraineeshipById(Long)
+}
+
+
+class _5336_4701_5281.swdeproj.SwdeprojApplication {
++ {static} void main(String[])
+}
+
+interface _5336_4701_5281.swdeproj.repository.LogbookEntryRepository {
+~ List<LogbookEntry> findByTraineeId(Long)
+~ List<LogbookEntry> findByTraineeshipId(Long)
+~ List<LogbookEntry> findByTraineeIdAndDateBetween(Long,LocalDate,LocalDate)
+~ List<LogbookEntry> findByTraineeIdAndDateBetweenAndStatus(Long,LocalDate,LocalDate,LogbookEntry.Status)
+~ List<LogbookEntry> findByTraineeAndTraineeship(Long,Long)
+~ Double sumHoursByTraineeAndTraineeship(Long,Long)
+~ Double sumHoursByTraineeAndTraineeshipAndStatus(Long,Long,LogbookEntry.Status)
+~ Long countApprovedEntriesByTraineeAndTraineeship(Long,Long,LogbookEntry.Status)
+~ long countByTraineeId(Long)
+}
+
+class _5336_4701_5281.swdeproj.dto.UserRegistrationDto {
+- String username
+- String email
+- String password
+- String role
+- String traineeFullName
+- String studentId
+- String traineeSkills
+- String traineeInterests
+- String preferredLocation
+- String companyName
+- String companyLocation
+- String companyPhone
+- String professorFullName
+- String professorInterests
++ String getUsername()
++ void setUsername(String)
++ String getEmail()
++ void setEmail(String)
++ String getPassword()
++ void setPassword(String)
++ String getRole()
++ void setRole(String)
++ String getTraineeFullName()
++ void setTraineeFullName(String)
++ String getStudentId()
++ void setStudentId(String)
++ String getTraineeSkills()
++ void setTraineeSkills(String)
++ String getTraineeInterests()
++ void setTraineeInterests(String)
++ String getPreferredLocation()
++ void setPreferredLocation(String)
++ String getCompanyName()
++ void setCompanyName(String)
++ String getCompanyLocation()
++ void setCompanyLocation(String)
++ String getCompanyPhone()
++ void setCompanyPhone(String)
++ String getProfessorFullName()
++ void setProfessorFullName(String)
++ String getProfessorInterests()
++ void setProfessorInterests(String)
+}
+
+
+class _5336_4701_5281.swdeproj.service.NotificationService {
+- NotificationRepository notificationRepository
+- UserRepository userRepository
++ void notifyApplicationStatusChange(Application)
++ void notifyNewApplication(Application)
++ List<Notification> getUserNotifications(User)
++ List<Notification> getUnreadNotifications(User)
++ long getUnreadNotificationCount(User)
++ void markAsRead(Long)
++ void markAllAsRead(User)
+}
+
+
+class _5336_4701_5281.swdeproj.dto.TraineeshipDto {
+- Long id
+- String title
+- String description
+- LocalDate startDate
+- LocalDate endDate
+- List<String> skillsRequired
+- List<String> topics
+- String location
+- Long companyId
+- String companyName
+- Long assignedTraineeId
+- String assignedTraineeName
+- String assignedTraineeStudentId
+- Long supervisorId
+- String supervisorName
+- boolean isAssigned
+- boolean hasEvaluation
+- Traineeship.Status status
+- List<ApplicationDto> applications
+- boolean hasCompanyEvaluation
+- Integer companyStudentMotivation
+- Integer companyStudentEffectiveness
+- Integer companyStudentEfficiency
+- String companyComments
+- LocalDateTime companyEvaluationDate
+- boolean hasProfessorEvaluation
+- Integer professorStudentMotivation
+- Integer professorStudentEffectiveness
+- Integer professorStudentEfficiency
+- Integer professorCompanyFacilities
+- Integer professorCompanyGuidance
+- String professorComments
+- LocalDateTime professorEvaluationDate
+- String completionOutcome
+- String completionComments
+- LocalDate completionDate
+- boolean hasBothEvaluations
++ Long getId()
++ void setId(Long)
++ String getTitle()
++ void setTitle(String)
++ String getDescription()
++ void setDescription(String)
++ LocalDate getStartDate()
++ void setStartDate(LocalDate)
++ LocalDate getEndDate()
++ void setEndDate(LocalDate)
++ List<String> getSkillsRequired()
++ void setSkillsRequired(List<String>)
++ List<String> getTopics()
++ void setTopics(List<String>)
++ String getLocation()
++ void setLocation(String)
++ Long getCompanyId()
++ void setCompanyId(Long)
++ String getCompanyName()
++ void setCompanyName(String)
++ Long getAssignedTraineeId()
++ void setAssignedTraineeId(Long)
++ String getAssignedTraineeName()
++ void setAssignedTraineeName(String)
++ String getAssignedTraineeStudentId()
++ void setAssignedTraineeStudentId(String)
++ Long getSupervisorId()
++ void setSupervisorId(Long)
++ String getSupervisorName()
++ void setSupervisorName(String)
++ boolean isAssigned()
++ void setAssigned(boolean)
++ boolean isHasEvaluation()
++ void setHasEvaluation(boolean)
++ Traineeship.Status getStatus()
++ void setStatus(Traineeship.Status)
++ List<ApplicationDto> getApplications()
++ void setApplications(List<ApplicationDto>)
++ boolean isHasCompanyEvaluation()
++ void setHasCompanyEvaluation(boolean)
++ boolean isHasProfessorEvaluation()
++ void setHasProfessorEvaluation(boolean)
++ Integer getCompanyStudentMotivation()
++ void setCompanyStudentMotivation(Integer)
++ Integer getCompanyStudentEffectiveness()
++ void setCompanyStudentEffectiveness(Integer)
++ Integer getCompanyStudentEfficiency()
++ void setCompanyStudentEfficiency(Integer)
++ String getCompanyComments()
++ void setCompanyComments(String)
++ LocalDateTime getCompanyEvaluationDate()
++ void setCompanyEvaluationDate(LocalDateTime)
++ Integer getProfessorStudentMotivation()
++ void setProfessorStudentMotivation(Integer)
++ Integer getProfessorStudentEffectiveness()
++ void setProfessorStudentEffectiveness(Integer)
++ Integer getProfessorStudentEfficiency()
++ void setProfessorStudentEfficiency(Integer)
++ Integer getProfessorCompanyFacilities()
++ void setProfessorCompanyFacilities(Integer)
++ Integer getProfessorCompanyGuidance()
++ void setProfessorCompanyGuidance(Integer)
++ String getProfessorComments()
++ void setProfessorComments(String)
++ LocalDateTime getProfessorEvaluationDate()
++ void setProfessorEvaluationDate(LocalDateTime)
++ String getCompletionOutcome()
++ void setCompletionOutcome(String)
++ String getCompletionComments()
++ void setCompletionComments(String)
++ LocalDate getCompletionDate()
++ void setCompletionDate(LocalDate)
++ boolean isHasBothEvaluations()
++ void setHasBothEvaluations(boolean)
+}
+
+
+class _5336_4701_5281.swdeproj.controller.UserController {
+- {static} Logger logger
+- UserRepository userRepository
+- TraineeProfileRepository traineeRepo
+- CompanyProfileRepository companyRepo
+- ProfessorProfileRepository professorRepo
+- CommitteeProfileRepository committeeRepo
+- BCryptPasswordEncoder passwordEncoder
++ String showLoginPage()
++ String showRegistrationForm(Model)
++ String registerUser(UserRegistrationDto,BindingResult,Model)
++ String testRegister()
+- List<String> splitAndTrim(String)
+}
+
+
+class _5336_4701_5281.swdeproj.model.TraineeshipEvaluation {
+- Long id
+- Traineeship traineeship
+- Integer studentMotivation
+- Integer studentEffectiveness
+- Integer studentEfficiency
+- Integer companyFacilities
+- Integer companyGuidance
+- String comments
+- LocalDateTime evaluationDate
+- Evaluation.EvaluatorType evaluatorType
++ Long getId()
++ void setId(Long)
++ Traineeship getTraineeship()
++ void setTraineeship(Traineeship)
++ Integer getStudentMotivation()
++ void setStudentMotivation(Integer)
++ Integer getStudentEffectiveness()
++ void setStudentEffectiveness(Integer)
++ Integer getStudentEfficiency()
++ void setStudentEfficiency(Integer)
++ Integer getCompanyFacilities()
++ void setCompanyFacilities(Integer)
++ Integer getCompanyGuidance()
++ void setCompanyGuidance(Integer)
++ String getComments()
++ void setComments(String)
++ LocalDateTime getEvaluationDate()
++ void setEvaluationDate(LocalDateTime)
++ Evaluation.EvaluatorType getEvaluatorType()
++ void setEvaluatorType(Evaluation.EvaluatorType)
++ double getAverageStudentRating()
++ double getAverageCompanyRating()
+}
+
+
+class _5336_4701_5281.swdeproj.model.Company {
+- Long id
+- String name
+- String address
+- String email
+- String phone
+- String description
+- User user
+- Set<Traineeship> traineeships
+- CompanyProfile profile
++ Long getId()
++ void setId(Long)
++ String getName()
++ void setName(String)
++ String getAddress()
++ void setAddress(String)
++ String getEmail()
++ void setEmail(String)
++ String getPhone()
++ void setPhone(String)
++ String getDescription()
++ void setDescription(String)
++ User getUser()
++ void setUser(User)
++ Set<Traineeship> getTraineeships()
++ void setTraineeships(Set<Traineeship>)
++ CompanyProfile getProfile()
++ void setProfile(CompanyProfile)
+}
+
+
+class _5336_4701_5281.swdeproj.controller.CommitteeController {
+- ApplicationRepository applicationRepo
+- TraineeshipRepository traineeshipRepo
+- UserRepository userRepo
+- EvaluationRepository evaluationRepo
+- LogbookEntryRepository logbookRepo
+- NotificationService notificationService
+- UserService userService
++ String listApplications(Model,Authentication)
++ String searchTraineeships(Long,String,Model,Authentication)
++ String assignTraineeship(String,String,RedirectAttributes,Authentication)
++ String viewOverview(Model)
++ String searchMatchingTraineeships(Long,String,String,Model,Authentication)
+- TraineeshipDto convertToDto(Traineeship)
+- ApplicationDto convertToDto(Application)
+}
+
+
+class _5336_4701_5281.swdeproj.model.Notification {
+- Long id
+- User user
+- String message
+- boolean isRead
+- LocalDateTime timestamp
+- NotificationType type
++ Long getId()
++ void setId(Long)
++ User getUser()
++ void setUser(User)
++ String getMessage()
++ void setMessage(String)
++ boolean isRead()
++ void setRead(boolean)
++ LocalDateTime getTimestamp()
++ void setTimestamp(LocalDateTime)
++ NotificationType getType()
++ void setType(NotificationType)
+}
+
+
+enum _5336_4701_5281.swdeproj.model.NotificationType {
++  APPLICATION_STATUS
++  LOGBOOK_STATUS
++  EVALUATION_SUBMITTED
+}
+
+class _5336_4701_5281.swdeproj.model.User {
+- Long id
+- String username
+- String password
+- String email
+- String fullName
+- Role role
+- Set<Role> roles
+- Set<LogbookEntry> logbookEntries
+- Set<Evaluation> evaluations
+- Set<Notification> notifications
+- TraineeProfile traineeProfile
+- CompanyProfile companyProfile
+- Company company
+- ProfessorProfile professorProfile
+- CommitteeProfile committeeProfile
++ Long getId()
++ String getUsername()
++ void setUsername(String)
++ String getEmail()
++ void setEmail(String)
++ String getPassword()
++ void setPassword(String)
++ String getFullName()
++ void setFullName(String)
++ Set<Role> getRoles()
++ void setRoles(Set<Role>)
++ void addRole(Role)
++ boolean hasRole(Role)
++ Set<Notification> getNotifications()
++ void setNotifications(Set<Notification>)
++ void addNotification(Notification)
++ void removeNotification(Notification)
++ TraineeProfile getTraineeProfile()
++ void setTraineeProfile(TraineeProfile)
++ CompanyProfile getCompanyProfile()
++ void setCompanyProfile(CompanyProfile)
++ Company getCompany()
++ void setCompany(Company)
++ ProfessorProfile getProfessorProfile()
++ void setProfessorProfile(ProfessorProfile)
++ CommitteeProfile getCommitteeProfile()
++ void setCommitteeProfile(CommitteeProfile)
++ Set<LogbookEntry> getLogbookEntries()
++ void setLogbookEntries(Set<LogbookEntry>)
++ Set<Evaluation> getEvaluations()
++ void setEvaluations(Set<Evaluation>)
++ Role getRole()
++ void setRole(Role)
++ boolean equals(Object)
++ int hashCode()
+}
+
+
+enum _5336_4701_5281.swdeproj.model.Role {
++  ROLE_TRAINEE
++  ROLE_COMPANY
++  ROLE_PROFESSOR
++  ROLE_COMMITTEE
+}
+
+class _5336_4701_5281.swdeproj.controller.CompanyController {
+- TraineeshipRepository traineeshipRepo
+- CompanyRepository companyRepo
+- UserRepository userRepo
+- EvaluationRepository evaluationRepo
+- UserService userService
++ String viewAssignedTraineeships(Model,Authentication)
++ String submitEvaluation(Long,Integer,Integer,Integer,String,Authentication,RedirectAttributes)
+- TraineeshipDto convertToDto(Traineeship)
+}
+
+
+
+
+org.springframework.data.jpa.repository.JpaRepository <|-- _5336_4701_5281.swdeproj.repository.NotificationRepository
+org.springframework.data.jpa.repository.JpaRepository <|-- _5336_4701_5281.swdeproj.repository.CompanyProfileRepository
+org.springframework.data.jpa.repository.JpaRepository <|-- _5336_4701_5281.swdeproj.repository.ProfessorProfileRepository
+org.springframework.data.jpa.repository.JpaRepository <|-- _5336_4701_5281.swdeproj.repository.EvaluationRepository
+org.springframework.data.jpa.repository.JpaRepository <|-- _5336_4701_5281.swdeproj.repository.TraineeshipEvaluationRepository
+org.springframework.data.jpa.repository.JpaRepository <|-- _5336_4701_5281.swdeproj.repository.UserRepository
+org.springframework.data.jpa.repository.JpaRepository <|-- _5336_4701_5281.swdeproj.repository.CommitteeProfileRepository
+org.springframework.data.jpa.repository.JpaRepository <|-- _5336_4701_5281.swdeproj.repository.CompanyRepository
+org.springframework.data.jpa.repository.JpaRepository <|-- _5336_4701_5281.swdeproj.repository.TraineeProfileRepository
+org.springframework.data.jpa.repository.JpaRepository <|-- _5336_4701_5281.swdeproj.repository.ApplicationRepository
+org.springframework.data.jpa.repository.JpaRepository <|-- _5336_4701_5281.swdeproj.repository.TraineeshipRepository
+_5336_4701_5281.swdeproj.service.UserDetailsService <|.. _5336_4701_5281.swdeproj.service.UserDetailsServiceImpl
+org.springframework.data.jpa.repository.JpaRepository <|-- _5336_4701_5281.swdeproj.repository.LogbookEntryRepository
+@enduml

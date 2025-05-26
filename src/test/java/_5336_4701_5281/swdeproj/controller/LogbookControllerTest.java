@@ -61,7 +61,7 @@ class LogbookControllerTest {
         when(userRepo.findByUsername("trainee")).thenReturn(Optional.of(user));
         when(traineeRepo.findByUserId(getId(user))).thenReturn(trainee);
 
-        String view = controller.viewLogbook(null, null, null, model, redirectAttrs);
+        String view = controller.viewLogbook(model, redirectAttrs);
         assertEquals("logbook/list", view);
         verify(model).addAttribute(eq("entries"), any());
     }

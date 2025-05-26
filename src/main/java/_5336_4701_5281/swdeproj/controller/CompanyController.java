@@ -100,7 +100,7 @@ public class CompanyController {
         traineeshipRepo.save(traineeship);
 
         redirectAttrs.addFlashAttribute("success", "Evaluation submitted successfully");
-        return "redirect:/company/traineeships";
+        return "redirect:/company/assigned-traineeships";
     }
 
     private TraineeshipDto convertToDto(Traineeship traineeship) {

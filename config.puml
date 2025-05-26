@@ -1,0 +1,12 @@
+@startuml
+class _5336_4701_5281.swdeproj.config.SecurityConfig {
+- {static} Logger logger
+- UserDetailsServiceImpl userDetailsServiceImpl
++ UserDetailsService userDetailsService()
++ BCryptPasswordEncoder passwordEncoder()
++ SecurityFilterChain securityFilterChain(HttpSecurity)
++ DaoAuthenticationProvider authenticationProvider()
+}
+
+
+@enduml

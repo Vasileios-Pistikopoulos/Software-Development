@@ -1,0 +1,44 @@
+@startuml
+class _5336_4701_5281.swdeproj.service.TraineeshipService {
+- ProfessorProfileRepository professorRepo
+- TraineeshipRepository traineeshipRepo
++ List<ProfessorProfile> findSuitableProfessors(Traineeship)
+- double calculateInterestScore(ProfessorProfile,Traineeship)
+- double calculateLoadScore(long)
++ void assignSupervisor(Long,Long)
++ Traineeship getTraineeshipById(Long)
+}
+
+
+class _5336_4701_5281.swdeproj.service.NotificationService {
+- NotificationRepository notificationRepository
+- UserRepository userRepository
++ void notifyApplicationStatusChange(Application)
++ void notifyNewApplication(Application)
++ List<Notification> getUserNotifications(User)
++ List<Notification> getUnreadNotifications(User)
++ long getUnreadNotificationCount(User)
++ void markAsRead(Long)
++ void markAllAsRead(User)
+}
+
+
+class _5336_4701_5281.swdeproj.service.UserDetailsServiceImpl {
+- UserRepository userRepository
++ UserDetails loadUserByUsername(String)
+}
+
+
+class _5336_4701_5281.swdeproj.service.UserService {
+- UserRepository userRepository
+- BCryptPasswordEncoder passwordEncoder
++ boolean emailExists(String)
++ User registerUser(String,String,String,String)
++ User getCurrentUser(Authentication)
+}
+
+
+
+
+_5336_4701_5281.swdeproj.service.UserDetailsService <|.. _5336_4701_5281.swdeproj.service.UserDetailsServiceImpl
+@enduml

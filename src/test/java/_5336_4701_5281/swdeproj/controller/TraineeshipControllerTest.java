@@ -1,6 +1,7 @@
 package _5336_4701_5281.swdeproj.controller;
 
 import _5336_4701_5281.swdeproj.dto.TraineeshipDto;
+import _5336_4701_5281.swdeproj.dto.EvaluationDto;
 import _5336_4701_5281.swdeproj.model.*;
 import _5336_4701_5281.swdeproj.repository.*;
 import _5336_4701_5281.swdeproj.service.*;
@@ -33,6 +34,8 @@ class TraineeshipControllerTest {
     @Mock private Model model;
     @Mock private RedirectAttributes redirectAttrs;
     @Mock private Authentication authentication;
+    @Mock private CompanyController companyController;
+    @Mock private EvaluationController evaluationController;
 
     @BeforeEach
     void setUp() {
@@ -133,16 +136,15 @@ class TraineeshipControllerTest {
     @Test
     void showEvaluationForm() {
         when(traineeshipRepo.findById(anyLong())).thenReturn(Optional.of(new Traineeship()));
-        String view = controller.showEvaluationForm(1L, model, authentication);
-        assertEquals("traineeship/evaluate", view);
-        verify(model).addAttribute(eq("traineeship"), any());
+        String view = evaluationController.showCreateForm(1L, model);
+        assertEquals("evaluation/create", view);
+        verify(model).addAttribute(eq("evaluation"), any());
     }
 
     @Test
     void submitEvaluation() {
         when(traineeshipRepo.findById(anyLong())).thenReturn(Optional.of(new Traineeship()));
-        // Adjust the arguments to match the controller's method signature
-        String view = controller.submitEvaluation(1L, 5, 5, 5, "comments", redirectAttrs, authentication);
+        String view = evaluationController.createEvaluation(1L, new EvaluationDto(), redirectAttrs);
         assertTrue(view.startsWith("redirect:"));
     }
 
