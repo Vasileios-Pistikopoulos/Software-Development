@@ -13,6 +13,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
@@ -75,8 +76,8 @@ public class ProfessorController {
             return "redirect:/professor/traineeships";
         }
 
-        // Check if evaluation already exists
-        if (traineeship.hasEvaluation()) {
+        // Check if professor evaluation already exists
+        if (traineeship.hasProfessorEvaluation()) {
             return "redirect:/professor/traineeships";
         }
 
@@ -108,9 +109,9 @@ public class ProfessorController {
             return "redirect:/professor/traineeships";
         }
 
-        // Check if evaluation already exists
-        if (traineeship.hasEvaluation()) {
-            redirectAttrs.addFlashAttribute("error", "This traineeship has already been evaluated");
+        // Check if professor evaluation already exists
+        if (traineeship.hasProfessorEvaluation()) {
+            redirectAttrs.addFlashAttribute("error", "This traineeship has already been evaluated by a professor");
             return "redirect:/professor/traineeships";
         }
 
@@ -125,7 +126,7 @@ public class ProfessorController {
         }
 
         // Create and save evaluation
-        TraineeshipEvaluation evaluation = new TraineeshipEvaluation();
+        ProfessorEvaluation evaluation = new ProfessorEvaluation();
         evaluation.setTraineeship(traineeship);
         evaluation.setStudentMotivation(studentMotivation);
         evaluation.setStudentEffectiveness(studentEffectiveness);
@@ -135,10 +136,34 @@ public class ProfessorController {
         evaluation.setComments(comments);
         evaluation.setEvaluationDate(LocalDateTime.now());
 
-        traineeship.setEvaluation(evaluation);
+        traineeship.setProfessorEvaluation(evaluation);
         traineeshipRepo.save(traineeship);
 
         redirectAttrs.addFlashAttribute("success", "Evaluation submitted successfully");
+        return "redirect:/professor/traineeships";
+    }
+
+    @PostMapping("/evaluate/{id}")
+    public String submitEvaluation(@PathVariable Long id, @ModelAttribute TraineeshipDto dto) {
+        Traineeship traineeship = traineeshipRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Traineeship not found"));
+        if (traineeship == null) {
+            return "redirect:/professor/traineeships";
+        }
+
+        ProfessorEvaluation evaluation = new ProfessorEvaluation();
+        evaluation.setTraineeship(traineeship);
+        evaluation.setStudentMotivation(dto.getProfessorStudentMotivation());
+        evaluation.setStudentEffectiveness(dto.getProfessorStudentEffectiveness());
+        evaluation.setStudentEfficiency(dto.getProfessorStudentEfficiency());
+        evaluation.setCompanyFacilities(dto.getProfessorCompanyFacilities());
+        evaluation.setCompanyGuidance(dto.getProfessorCompanyGuidance());
+        evaluation.setComments(dto.getProfessorComments());
+        evaluation.setEvaluationDate(LocalDateTime.now());
+
+        traineeship.setProfessorEvaluation(evaluation);
+        traineeshipRepo.save(traineeship);
+
         return "redirect:/professor/traineeships";
     }
 
@@ -167,24 +192,19 @@ public class ProfessorController {
             dto.setSupervisorName(traineeship.getSupervisor().getFullName());
         }
 
-        // Check if professor evaluation exists
-        boolean hasProfessorEvaluation = evaluationRepository
-            .findByTraineeshipIdAndEvaluatorType(traineeship.getId(), Evaluation.EvaluatorType.PROFESSOR)
-            .isPresent();
-        dto.setHasEvaluation(hasProfessorEvaluation);
-
-        // Add evaluation information if it exists
-        if (hasProfessorEvaluation) {
-            evaluationRepository.findByTraineeshipIdAndEvaluatorType(traineeship.getId(), Evaluation.EvaluatorType.PROFESSOR)
-                .ifPresent(evaluation -> {
-                    dto.setStudentMotivation(evaluation.getMotivationRating());
-                    dto.setStudentEffectiveness(evaluation.getEffectivenessRating());
-                    dto.setStudentEfficiency(evaluation.getEfficiencyRating());
-                    dto.setCompanyFacilities(evaluation.getFacilitiesRating());
-                    dto.setCompanyGuidance(evaluation.getGuidanceRating());
-                    dto.setEvaluationComments(evaluation.getComments());
-                    dto.setEvaluationDate(evaluation.getDate().atStartOfDay());
-                });
+        // Handle professor evaluation
+        if (traineeship.hasProfessorEvaluation()) {
+            dto.setHasProfessorEvaluation(true);
+            ProfessorEvaluation evaluation = traineeship.getProfessorEvaluation();
+            dto.setProfessorStudentMotivation(evaluation.getStudentMotivation());
+            dto.setProfessorStudentEffectiveness(evaluation.getStudentEffectiveness());
+            dto.setProfessorStudentEfficiency(evaluation.getStudentEfficiency());
+            dto.setProfessorCompanyFacilities(evaluation.getCompanyFacilities());
+            dto.setProfessorCompanyGuidance(evaluation.getCompanyGuidance());
+            dto.setProfessorComments(evaluation.getComments());
+            dto.setProfessorEvaluationDate(evaluation.getEvaluationDate());
+        } else {
+            dto.setHasProfessorEvaluation(false);
         }
 
         return dto;

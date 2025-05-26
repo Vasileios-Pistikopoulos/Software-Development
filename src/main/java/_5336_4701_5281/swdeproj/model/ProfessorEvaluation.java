@@ -4,8 +4,8 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "traineeship_evaluations")
-public class TraineeshipEvaluation {
+@Table(name = "professor_evaluations")
+public class ProfessorEvaluation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,10 +25,10 @@ public class TraineeshipEvaluation {
     private Integer studentEfficiency;
 
     // Company evaluation ratings (1-5)
-    @Column(nullable = true)
+    @Column(nullable = false)
     private Integer companyFacilities;
 
-    @Column(nullable = true)
+    @Column(nullable = false)
     private Integer companyGuidance;
 
     // Additional comments
@@ -37,11 +37,6 @@ public class TraineeshipEvaluation {
 
     @Column(nullable = false)
     private LocalDateTime evaluationDate;
-
-    // Add evaluatorType field
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Evaluation.EvaluatorType evaluatorType;
 
     // Getters and Setters
     public Long getId() {
@@ -114,15 +109,6 @@ public class TraineeshipEvaluation {
 
     public void setEvaluationDate(LocalDateTime evaluationDate) {
         this.evaluationDate = evaluationDate;
-    }
-
-    // Add getter and setter for evaluatorType
-    public Evaluation.EvaluatorType getEvaluatorType() {
-        return evaluatorType;
-    }
-
-    public void setEvaluatorType(Evaluation.EvaluatorType evaluatorType) {
-        this.evaluatorType = evaluatorType;
     }
 
     // Helper method to calculate average student rating

@@ -56,12 +56,12 @@
                             </a>
                             
                             <!-- Evaluation button - only show if not already evaluated -->
-                            <a th:if="${!traineeship.hasEvaluation}" 
+                            <a th:if="${!traineeship.hasProfessorEvaluation}" 
                                th:href="@{/professor/traineeships/{id}/evaluate(id=${traineeship.id})}" 
                                class="btn btn-primary">
                                 <i class="bi bi-star"></i> Evaluate
                             </a>
-                            <span th:if="${traineeship.hasEvaluation}" class="badge bg-success">
+                            <span th:if="${traineeship.hasProfessorEvaluation}" class="badge bg-success">
                                 <i class="bi bi-check-circle"></i> Evaluated
                             </span>
                         </div>

@@ -1,0 +1,65 @@
+                        <!-- Debug Information -->
+                        <div class="card mb-3">
+                            <div class="card-header bg-light">
+                                <h6 class="mb-0">
+                                    <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#debugInfo[[${traineeship.id}]]">
+                                        Debug Info for Traineeship [[${traineeship.id}]]
+                                    </button>
+                                </h6>
+                            </div>
+                            <div id="debugInfo[[${traineeship.id}]]" class="collapse">
+                                <div class="card-body">
+                                    <table class="table table-sm">
+                                        <tr>
+                                            <th>Title:</th>
+                                            <td>[[${traineeship.title}]]</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Status:</th>
+                                            <td>[[${traineeship.status.name()}]]</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Is FILLED:</th>
+                                            <td>[[${traineeship.status.name() == 'FILLED'}]]</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Supervisor ID:</th>
+                                            <td>[[${traineeship.supervisorId}]]</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Current Professor ID:</th>
+                                            <td>[[${currentProfessorId}]]</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Is Supervisor:</th>
+                                            <td>[[${traineeship.supervisorId == currentProfessorId}]]</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Has Professor Evaluation:</th>
+                                            <td>[[${traineeship.hasProfessorEvaluation}]]</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Should Show Button:</th>
+                                            <td>[[${traineeship.status.name() == 'FILLED' && traineeship.supervisorId == currentProfessorId && !traineeship.hasProfessorEvaluation}]]</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <script th:inline="javascript">
+                            document.addEventListener('DOMContentLoaded', function() {
+                                var debugInfo = document.querySelector('[data-debug="true"]');
+                                if (debugInfo) {
+                                    console.log(debugInfo.innerHTML);
+                                    alert('Debug info logged to console. Press F12 to view.');
+                                }
+                            });
+                        </script>
+
+                        <!-- Evaluation Button -->
+                        <div th:if="${traineeship.status.name() == 'FILLED' && traineeship.supervisorId == currentProfessorId && !traineeship.hasProfessorEvaluation}">
+                            <a th:href="@{/professor/traineeships/{id}/evaluate(id=${traineeship.id})}" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Evaluate Traineeship
+                            </a>
+                        </div> 

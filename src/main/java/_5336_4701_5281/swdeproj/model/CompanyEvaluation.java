@@ -4,8 +4,8 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "traineeship_evaluations")
-public class TraineeshipEvaluation {
+@Table(name = "company_evaluations")
+public class CompanyEvaluation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,24 +24,12 @@ public class TraineeshipEvaluation {
     @Column(nullable = false)
     private Integer studentEfficiency;
 
-    // Company evaluation ratings (1-5)
-    @Column(nullable = true)
-    private Integer companyFacilities;
-
-    @Column(nullable = true)
-    private Integer companyGuidance;
-
     // Additional comments
     @Column(columnDefinition = "TEXT")
     private String comments;
 
     @Column(nullable = false)
     private LocalDateTime evaluationDate;
-
-    // Add evaluatorType field
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Evaluation.EvaluatorType evaluatorType;
 
     // Getters and Setters
     public Long getId() {
@@ -84,22 +72,6 @@ public class TraineeshipEvaluation {
         this.studentEfficiency = studentEfficiency;
     }
 
-    public Integer getCompanyFacilities() {
-        return companyFacilities;
-    }
-
-    public void setCompanyFacilities(Integer companyFacilities) {
-        this.companyFacilities = companyFacilities;
-    }
-
-    public Integer getCompanyGuidance() {
-        return companyGuidance;
-    }
-
-    public void setCompanyGuidance(Integer companyGuidance) {
-        this.companyGuidance = companyGuidance;
-    }
-
     public String getComments() {
         return comments;
     }
@@ -116,22 +88,8 @@ public class TraineeshipEvaluation {
         this.evaluationDate = evaluationDate;
     }
 
-    // Add getter and setter for evaluatorType
-    public Evaluation.EvaluatorType getEvaluatorType() {
-        return evaluatorType;
-    }
-
-    public void setEvaluatorType(Evaluation.EvaluatorType evaluatorType) {
-        this.evaluatorType = evaluatorType;
-    }
-
     // Helper method to calculate average student rating
     public double getAverageStudentRating() {
         return (studentMotivation + studentEffectiveness + studentEfficiency) / 3.0;
-    }
-
-    // Helper method to calculate average company rating
-    public double getAverageCompanyRating() {
-        return (companyFacilities + companyGuidance) / 2.0;
     }
 } 

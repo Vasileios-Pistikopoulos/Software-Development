@@ -74,78 +74,101 @@
                     <p th:text="${traineeship.description}">Description text here...</p>
                 </div>
 
-                <!-- Evaluation Section -->
-                <div th:if="${traineeship.hasEvaluation}" class="card mb-4">
+                <!-- Company Evaluation Section -->
+                <div th:if="${traineeship.hasCompanyEvaluation}" class="card mb-4">
                     <div class="card-header">
-                        <h5 class="mb-0">Evaluation Results</h5>
+                        <h5 class="mb-0">Company's Evaluation</h5>
                     </div>
                     <div class="card-body">
-                        <div class="row">
-                            <!-- Student Evaluation -->
-                            <div class="col-md-6">
-                                <h6>Student Evaluation</h6>
-                                <div class="mb-3">
-                                    <label>Motivation:</label>
-                                    <div class="progress">
-                                        <div class="progress-bar" role="progressbar" 
-                                             th:style="'width: ' + ${traineeship.studentMotivation * 20} + '%'"
-                                             th:text="${traineeship.studentMotivation} + '/5'">3/5</div>
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <label>Effectiveness:</label>
-                                    <div class="progress">
-                                        <div class="progress-bar" role="progressbar" 
-                                             th:style="'width: ' + ${traineeship.studentEffectiveness * 20} + '%'"
-                                             th:text="${traineeship.studentEffectiveness} + '/5'">3/5</div>
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <label>Efficiency:</label>
-                                    <div class="progress">
-                                        <div class="progress-bar" role="progressbar" 
-                                             th:style="'width: ' + ${traineeship.studentEfficiency * 20} + '%'"
-                                             th:text="${traineeship.studentEfficiency} + '/5'">3/5</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Company Evaluation -->
-                            <div class="col-md-6">
-                                <h6>Company Evaluation</h6>
-                                <div class="mb-3">
-                                    <label>Facilities:</label>
-                                    <div class="progress">
-                                        <div class="progress-bar" role="progressbar" 
-                                             th:style="'width: ' + ${traineeship.companyFacilities * 20} + '%'"
-                                             th:text="${traineeship.companyFacilities} + '/5'">3/5</div>
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <label>Guidance:</label>
-                                    <div class="progress">
-                                        <div class="progress-bar" role="progressbar" 
-                                             th:style="'width: ' + ${traineeship.companyGuidance * 20} + '%'"
-                                             th:text="${traineeship.companyGuidance} + '/5'">3/5</div>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Category</th>
+                                        <th>Rating</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Student Motivation</td>
+                                        <td th:text="${traineeship.companyStudentMotivation}">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Student Effectiveness</td>
+                                        <td th:text="${traineeship.companyStudentEffectiveness}">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Student Efficiency</td>
+                                        <td th:text="${traineeship.companyStudentEfficiency}">-</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
-
-                        <!-- Additional Comments -->
-                        <div th:if="${traineeship.evaluationComments}" class="mt-4">
-                            <h6>Additional Comments</h6>
-                            <p th:text="${traineeship.evaluationComments}">Comments text here...</p>
+                        <div th:if="${traineeship.companyComments}" class="mt-3">
+                            <h6>Comments:</h6>
+                            <p th:text="${traineeship.companyComments}"></p>
                         </div>
-
-                        <div class="text-muted mt-3">
-                            <small>Evaluation submitted on: 
-                                <span th:text="${#temporals.format(traineeship.evaluationDate, 'dd/MM/yyyy HH:mm')}">
-                                    01/01/2024 12:00
-                                </span>
-                            </small>
+                        <div class="mt-2">
+                            <small class="text-muted">Evaluation Date: <span th:text="${#temporals.format(traineeship.companyEvaluationDate, 'dd/MM/yyyy HH:mm')}"></span></small>
                         </div>
                     </div>
+                </div>
+
+                <!-- Professor Evaluation Section -->
+                <div th:if="${traineeship.hasProfessorEvaluation}" class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Professor's Evaluation</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Category</th>
+                                        <th>Rating</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Student Motivation</td>
+                                        <td th:text="${traineeship.professorStudentMotivation}">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Student Effectiveness</td>
+                                        <td th:text="${traineeship.professorStudentEffectiveness}">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Student Efficiency</td>
+                                        <td th:text="${traineeship.professorStudentEfficiency}">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Company Facilities</td>
+                                        <td th:text="${traineeship.professorCompanyFacilities}">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Company Guidance</td>
+                                        <td th:text="${traineeship.professorCompanyGuidance}">-</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div th:if="${traineeship.professorComments}" class="mt-3">
+                            <h6>Comments:</h6>
+                            <p th:text="${traineeship.professorComments}"></p>
+                        </div>
+                        <div class="mt-2">
+                            <small class="text-muted">Evaluation Date: <span th:text="${#temporals.format(traineeship.professorEvaluationDate, 'dd/MM/yyyy HH:mm')}"></span></small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Evaluation Status Messages -->
+                <div th:if="${!traineeship.hasCompanyEvaluation || !traineeship.hasProfessorEvaluation}" class="alert alert-info">
+                    <h6>Evaluation Status:</h6>
+                    <ul class="mb-0">
+                        <li th:if="${!traineeship.hasCompanyEvaluation}">Company's evaluation is pending</li>
+                        <li th:if="${!traineeship.hasProfessorEvaluation}">Professor's evaluation is pending</li>
+                    </ul>
                 </div>
 
                 <!-- Completion Results Section -->
@@ -179,59 +202,29 @@
                     </div>
                 </div>
 
-                <!-- Completion Section -->
-                <div sec:authorize="hasRole('ROLE_COMMITTEE')" 
-                     th:if="${traineeship.status.name() == 'FILLED' && traineeship.supervisorName != null && traineeship.hasEvaluation}"
-                     class="card mb-4">
+                <!-- Completion Form (only for committee members when both evaluations exist) -->
+                <div th:if="${#authorization.expression('hasRole(''ROLE_COMMITTEE'')') && traineeship.status.name() == 'FILLED' && traineeship.hasBothEvaluations}" class="card mb-4">
                     <div class="card-header">
                         <h5 class="mb-0">Complete Traineeship</h5>
                     </div>
                     <div class="card-body">
-                        <p class="text-muted">All requirements have been met. You can now complete this traineeship.</p>
-                        <button type="button" class="btn btn-success" 
-                                data-bs-toggle="modal" 
-                                data-bs-target="#completeModal">
-                            <i class="bi bi-check-circle"></i> Complete Traineeship
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Completion Modal -->
-                <div sec:authorize="hasRole('ROLE_COMMITTEE')" 
-                     th:if="${traineeship.status.name() == 'FILLED' && traineeship.supervisorName != null && traineeship.hasEvaluation}"
-                     class="modal fade" id="completeModal" tabindex="-1">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">Complete Traineeship</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        <form th:action="@{/traineeships/{id}/complete(id=${traineeship.id})}" method="post">
+                            <div class="mb-3">
+                                <label for="outcome" class="form-label">Outcome</label>
+                                <select class="form-select" id="outcome" name="outcome" required>
+                                    <option value="">Select outcome...</option>
+                                    <option value="PASS">Pass</option>
+                                    <option value="FAIL">Fail</option>
+                                </select>
                             </div>
-                            <div class="modal-body">
-                                <p>Please select the final outcome for this traineeship:</p>
-                                <form th:action="@{/traineeships/{id}/complete(id=${traineeship.id})}" method="post">
-                                    <div class="form-check mb-3">
-                                        <input class="form-check-input" type="radio" name="outcome" id="pass" value="PASS" required>
-                                        <label class="form-check-label" for="pass">
-                                            Pass
-                                        </label>
-                                    </div>
-                                    <div class="form-check mb-3">
-                                        <input class="form-check-input" type="radio" name="outcome" id="fail" value="FAIL" required>
-                                        <label class="form-check-label" for="fail">
-                                            Fail
-                                        </label>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="comments" class="form-label">Comments (optional)</label>
-                                        <textarea class="form-control" id="comments" name="comments" rows="3"></textarea>
-                                    </div>
-                                    <div class="text-end">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                        <button type="submit" class="btn btn-success">Complete Traineeship</button>
-                                    </div>
-                                </form>
+                            <div class="mb-3">
+                                <label for="comments" class="form-label">Comments</label>
+                                <textarea class="form-control" id="comments" name="comments" rows="3"></textarea>
                             </div>
-                        </div>
+                            <button type="submit" class="btn btn-primary">
+                                Complete Traineeship
+                            </button>
+                        </form>
                     </div>
                 </div>
 
@@ -290,6 +283,13 @@
                     </div>
                 </div>
 
+                <!-- Professor Evaluation Button -->
+                <div sec:authorize="hasRole('ROLE_PROFESSOR')" th:if="${traineeship.status.name() == 'FILLED' && !traineeship.hasProfessorEvaluation}">
+                    <a th:href="@{/professor/traineeships/{id}/evaluate(id=${traineeship.id})}" class="btn btn-primary">
+                        <i class="bi bi-check-circle"></i> Evaluate Traineeship
+                    </a>
+                </div>
+
                 <!-- Action Buttons -->
                 <div class="mt-4">
                     <a th:href="@{/traineeships}" class="btn btn-outline-secondary">
@@ -300,31 +300,6 @@
                     <div sec:authorize="hasRole('ROLE_COMPANY')" th:if="${isOwner && traineeship.status.name() != 'FILLED'}" class="d-inline-block ms-2">
                         <a th:href="@{/traineeships/{id}/edit(id=${traineeship.id})}" class="btn btn-primary">
                             <i class="bi bi-pencil"></i> Edit Position
-                        </a>
-                    </div>
-                    
-                    <!-- Evaluation button - only show for company owners when position is assigned and not yet evaluated -->
-                    <div sec:authorize="hasRole('ROLE_COMPANY')" 
-                         th:if="${isOwner && traineeship.status.name() == 'FILLED' && !traineeship.hasEvaluation}" 
-                         class="d-inline-block ms-2">
-                        <a th:href="@{/traineeships/{id}/evaluate(id=${traineeship.id})}" class="btn btn-info">
-                            <i class="bi bi-star"></i> Evaluate Trainee
-                        </a>
-                    </div>
-                    
-                    <!-- Evaluation Status - show when evaluated -->
-                    <div sec:authorize="hasRole('ROLE_COMPANY')" 
-                         th:if="${isOwner && traineeship.status.name() == 'FILLED' && traineeship.hasEvaluation}" 
-                         class="d-inline-block ms-2">
-                        <span class="badge bg-success">
-                            <i class="bi bi-check-circle"></i> Evaluated
-                        </span>
-                    </div>
-                    
-                    <!-- Apply button - only show for trainees and if not already applied -->
-                    <div sec:authorize="hasRole('ROLE_TRAINEE')" th:if="${!hasApplied}" class="d-inline-block ms-2">
-                        <a th:href="@{/traineeships/apply}" class="btn btn-success">
-                            <i class="bi bi-file-text"></i> Apply for Position
                         </a>
                     </div>
                 </div>

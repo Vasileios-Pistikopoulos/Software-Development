@@ -19,117 +19,93 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
 
-        <!-- Traineeship Info -->
-        <div class="alert alert-info mb-4">
-            <div class="row">
-                <div class="col-md-6">
-                    <h5 class="alert-heading">Current Traineeship</h5>
-                    <p class="mb-0">
-                        <strong>Company:</strong> <span th:text="${activeTraineeship.company.name}">Company Name</span><br>
-                        <strong>Period:</strong> 
-                        <span th:text="${#temporals.format(activeTraineeship.startDate, 'dd/MM/yyyy')}">01/01/2024</span> - 
-                        <span th:text="${#temporals.format(activeTraineeship.endDate, 'dd/MM/yyyy')}">30/06/2024</span>
-                    </p>
-                </div>
-                <div class="col-md-6">
-                    <h5 class="alert-heading">Statistics</h5>
-                    <p class="mb-0">
-                        <strong>Total Hours:</strong> <span th:text="${totalHours}">0</span><br>
-                        <strong>Approved Hours:</strong> <span th:text="${approvedHours}">0</span><br>
-                        <strong>Pending Hours:</strong> <span th:text="${totalHours - approvedHours}">0</span>
-                    </p>
-                </div>
-            </div>
+        <!-- Info Message for No Active Traineeship -->
+        <div th:if="${activeTraineeship == null || activeTraineeship.status.name() != 'FILLED'}" class="alert alert-info">
+            <h4 class="alert-heading">No Active Traineeship</h4>
+            <p>You don't have an active traineeship yet. Once your application is accepted and a traineeship is assigned to you, you'll be able to start logging your activities here.</p>
         </div>
 
-        <!-- Filter Form -->
-        <div class="card mb-4">
-            <div class="card-body">
-                <form th:action="@{/logbook}" method="get" class="row g-3">
-                    <div class="col-md-4">
-                        <label for="startDate" class="form-label">Start Date</label>
-                        <input type="date" class="form-control" id="startDate" name="startDate" 
-                               th:value="${startDate}" th:min="${#temporals.format(activeTraineeship.startDate, 'yyyy-MM-dd')}"
-                               th:max="${#temporals.format(activeTraineeship.endDate, 'yyyy-MM-dd')}">
+        <!-- Logbook Section (only shown when there's an active traineeship) -->
+        <div th:if="${activeTraineeship != null && activeTraineeship.status.name() == 'FILLED'}">
+            <!-- Traineeship Info -->
+            <div class="alert alert-info mb-4">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5 class="alert-heading">Current Traineeship</h5>
+                        <p class="mb-0">
+                            <strong>Company:</strong> <span th:text="${activeTraineeship.company.name}">Company Name</span><br>
+                            <strong>Period:</strong> 
+                            <span th:text="${#temporals.format(activeTraineeship.startDate, 'dd/MM/yyyy')}">01/01/2024</span> - 
+                            <span th:text="${#temporals.format(activeTraineeship.endDate, 'dd/MM/yyyy')}">30/06/2024</span>
+                        </p>
                     </div>
-                    <div class="col-md-4">
-                        <label for="endDate" class="form-label">End Date</label>
-                        <input type="date" class="form-control" id="endDate" name="endDate" 
-                               th:value="${endDate}" th:min="${#temporals.format(activeTraineeship.startDate, 'yyyy-MM-dd')}"
-                               th:max="${#temporals.format(activeTraineeship.endDate, 'yyyy-MM-dd')}">
+                    <div class="col-md-6">
+                        <h5 class="alert-heading">Statistics</h5>
+                        <p class="mb-0">
+                            <strong>Total Hours:</strong> <span th:text="${totalHours}">0</span><br>
+                            <strong>Approved Hours:</strong> <span th:text="${approvedHours}">0</span><br>
+                            <strong>Pending Hours:</strong> <span th:text="${totalHours - approvedHours}">0</span>
+                        </p>
                     </div>
-                    <div class="col-md-4">
-                        <label for="status" class="form-label">Status</label>
-                        <select class="form-select" id="status" name="status">
-                            <option value="">All</option>
-                            <option value="PENDING" th:selected="${status == 'PENDING'}">Pending</option>
-                            <option value="APPROVED" th:selected="${status == 'APPROVED'}">Approved</option>
-                            <option value="REJECTED" th:selected="${status == 'REJECTED'}">Rejected</option>
-                        </select>
-                    </div>
-                    <div class="col-12">
-                        <button type="submit" class="btn btn-primary">Apply Filters</button>
-                        <a th:href="@{/logbook}" class="btn btn-outline-secondary">Clear Filters</a>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- Entries List -->
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h2 class="card-title mb-0">Logbook Entries</h2>
-                <a th:href="@{/logbook/create}" class="btn btn-primary">New Entry</a>
-            </div>
-            <div class="card-body">
-                <div th:if="${entries.empty}" class="alert alert-info">
-                    No logbook entries found for the selected period.
                 </div>
-                <div th:each="entry : ${entries}" class="card mb-3">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">
-                            <span th:text="${#temporals.format(entry.date, 'dd/MM/yyyy')}">01/01/2024</span>
-                            <span class="badge" th:classappend="${entry.status == 'APPROVED' ? 'bg-success' : 
-                                                                  entry.status == 'REJECTED' ? 'bg-danger' : 
-                                                                  'bg-warning'}"
-                                  th:text="${entry.status}">PENDING</span>
-                        </h5>
-                        <div class="btn-group">
-                            <a th:href="@{/logbook/edit/{id}(id=${entry.id})}" class="btn btn-sm btn-outline-primary"
-                               th:if="${entry.status == 'PENDING'}">Edit</a>
-                            <form th:action="@{/logbook/delete/{id}(id=${entry.id})}" method="post" class="d-inline"
-                                  th:if="${entry.status == 'PENDING'}"
-                                  onsubmit="return confirm('Are you sure you want to delete this entry?');">
-                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
-                            </form>
-                        </div>
+            </div>
+
+            <!-- Entries List -->
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h2 class="card-title mb-0">Logbook Entries</h2>
+                    <a th:href="@{/logbook/create}" class="btn btn-primary">New Entry</a>
+                </div>
+                <div class="card-body">
+                    <div th:if="${entries.empty}" class="alert alert-info">
+                        No logbook entries found.
                     </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-3">
-                                <strong>Hours:</strong> <span th:text="${entry.hoursSpent}">0</span>
-                            </div>
-                            <div class="col-md-9">
-                                <strong>Tasks:</strong>
-                                <p th:text="${entry.taskDescription}">Task description</p>
-                            </div>
-                        </div>
-                        <div class="row mt-2">
-                            <div class="col-12">
-                                <strong>Learning Outcomes:</strong>
-                                <p th:text="${entry.learningOutcomes}">Learning outcomes</p>
-                            </div>
-                        </div>
-                        <div class="row mt-2" th:if="${entry.comments != null && !entry.comments.isEmpty()}">
-                            <div class="col-12">
-                                <strong>Additional Notes:</strong>
-                                <p th:text="${entry.comments}">Comments</p>
+                    <div th:each="entry : ${entries}" class="card mb-3">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">
+                                <span th:text="${#temporals.format(entry.date, 'dd/MM/yyyy')}">01/01/2024</span>
+                                <span class="badge" th:classappend="${entry.status == 'APPROVED' ? 'bg-success' : 
+                                                                      entry.status == 'REJECTED' ? 'bg-danger' : 
+                                                                      'bg-warning'}"
+                                      th:text="${entry.status}">PENDING</span>
+                            </h5>
+                            <div class="btn-group">
+                                <a th:href="@{/logbook/edit/{id}(id=${entry.id})}" class="btn btn-sm btn-outline-primary"
+                                   th:if="${entry.status == 'PENDING'}">Edit</a>
+                                <form th:action="@{/logbook/delete/{id}(id=${entry.id})}" method="post" class="d-inline"
+                                      th:if="${entry.status == 'PENDING'}"
+                                      onsubmit="return confirm('Are you sure you want to delete this entry?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                </form>
                             </div>
                         </div>
-                        <div class="row mt-2" th:if="${entry.status == 'REJECTED' && entry.comments != null}">
-                            <div class="col-12">
-                                <strong>Rejection Reason:</strong>
-                                <p class="text-danger" th:text="${entry.comments}">Rejection reason</p>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <strong>Hours:</strong> <span th:text="${entry.hoursSpent}">0</span>
+                                </div>
+                                <div class="col-md-9">
+                                    <strong>Tasks:</strong>
+                                    <p th:text="${entry.taskDescription}">Task description</p>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-12">
+                                    <strong>Learning Outcomes:</strong>
+                                    <p th:text="${entry.learningOutcomes}">Learning outcomes</p>
+                                </div>
+                            </div>
+                            <div class="row mt-2" th:if="${entry.comments != null && !entry.comments.isEmpty()}">
+                                <div class="col-12">
+                                    <strong>Additional Notes:</strong>
+                                    <p th:text="${entry.comments}">Comments</p>
+                                </div>
+                            </div>
+                            <div class="row mt-2" th:if="${entry.status == 'REJECTED' && entry.comments != null}">
+                                <div class="col-12">
+                                    <strong>Rejection Reason:</strong>
+                                    <p class="text-danger" th:text="${entry.comments}">Rejection reason</p>
+                                </div>
                             </div>
                         </div>
                     </div>

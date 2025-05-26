@@ -5,27 +5,6 @@
       layout:decorate="~{base}">
 <head>
     <title>Evaluate Traineeship</title>
-    <style>
-        .rating-group {
-            display: flex;
-            flex-direction: row-reverse;
-            justify-content: flex-end;
-        }
-        .rating-group input[type="radio"] {
-            display: none;
-        }
-        .rating-group label {
-            cursor: pointer;
-            padding: 5px;
-            font-size: 1.5em;
-            color: #ddd;
-        }
-        .rating-group label:hover,
-        .rating-group label:hover ~ label,
-        .rating-group input[type="radio"]:checked ~ label {
-            color: #ffd700;
-        }
-    </style>
 </head>
 <body>
 <section layout:fragment="content">
@@ -59,13 +38,12 @@
         </div>
 
         <!-- Evaluation Form -->
-        <form th:action="@{/professor/traineeships/{id}/evaluate(id=${traineeship.id})}" method="post" class="needs-validation" novalidate>
+        <form th:action="@{/company/traineeships/{id}/evaluate(id=${traineeship.id})}" method="post" class="needs-validation" novalidate>
             <div class="card">
                 <div class="card-header">
                     <h5 class="mb-0">Evaluate Traineeship</h5>
                 </div>
                 <div class="card-body">
-                    <h6 class="mb-3">Student Evaluation</h6>
                     <div class="mb-3">
                         <label for="studentMotivation" class="form-label">Student Motivation (1-5)</label>
                         <input type="number" class="form-control" id="studentMotivation" name="studentMotivation" min="1" max="5" required>
@@ -84,19 +62,6 @@
                         <div class="invalid-feedback">Please provide a rating between 1 and 5.</div>
                     </div>
 
-                    <h6 class="mb-3 mt-4">Company Evaluation</h6>
-                    <div class="mb-3">
-                        <label for="companyFacilities" class="form-label">Company Facilities (1-5)</label>
-                        <input type="number" class="form-control" id="companyFacilities" name="companyFacilities" min="1" max="5" required>
-                        <div class="invalid-feedback">Please provide a rating between 1 and 5.</div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="companyGuidance" class="form-label">Company Guidance (1-5)</label>
-                        <input type="number" class="form-control" id="companyGuidance" name="companyGuidance" min="1" max="5" required>
-                        <div class="invalid-feedback">Please provide a rating between 1 and 5.</div>
-                    </div>
-
                     <div class="mb-3">
                         <label for="comments" class="form-label">Comments</label>
                         <textarea class="form-control" id="comments" name="comments" rows="3"></textarea>
@@ -104,7 +69,7 @@
                 </div>
                 <div class="card-footer">
                     <button type="submit" class="btn btn-primary">Submit Evaluation</button>
-                    <a th:href="@{/professor/traineeships}" class="btn btn-secondary">Cancel</a>
+                    <a th:href="@{/company/traineeships}" class="btn btn-secondary">Cancel</a>
                 </div>
             </div>
         </form>

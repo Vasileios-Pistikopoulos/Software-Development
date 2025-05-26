@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -33,16 +34,13 @@ public class LogbookController {
     }
 
     @GetMapping
-    public String viewLogbook(@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-                            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
-                            @RequestParam(required = false) String status,
-                            Model model,
+    public String viewLogbook(Model model,
                             RedirectAttributes redirectAttrs) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepo.findByUsername(auth.getName())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (!user.getRole().equals(User.Role.ROLE_TRAINEE)) {
+        if (!user.hasRole(User.Role.ROLE_TRAINEE)) {
             return "redirect:/home";
         }
 
@@ -54,19 +52,18 @@ public class LogbookController {
 
         // Find the active traineeship
         Traineeship activeTraineeship = traineeshipRepo.findFirstByAssignedTraineeIdOrderByStartDateDesc(trainee.getId());
-
-        // Set default dates if not provided
-        if (startDate == null) startDate = LocalDate.now().minusMonths(1);
-        if (endDate == null) endDate = LocalDate.now();
-
-        // Get entries based on filters
-        List<LogbookEntry> entries;
-        if (status != null && !status.isEmpty()) {
-            entries = logbookRepo.findByTraineeIdAndDateBetweenAndStatus(
-                trainee.getId(), startDate, endDate, LogbookEntry.Status.valueOf(status));
-        } else {
-            entries = logbookRepo.findByTraineeIdAndDateBetween(trainee.getId(), startDate, endDate);
+        if (activeTraineeship == null) {
+            redirectAttrs.addFlashAttribute("error", "You don't have an active traineeship. Please wait for a traineeship to be assigned to you.");
+            return "redirect:/home";
         }
+
+        if (activeTraineeship.getStatus() != Traineeship.Status.FILLED) {
+            redirectAttrs.addFlashAttribute("error", "Your traineeship is not active yet. Please wait for it to be filled.");
+            return "redirect:/home";
+        }
+
+        // Get all entries
+        List<LogbookEntry> entries = logbookRepo.findByTraineeId(trainee.getUser().getId());
 
         // Calculate statistics
         Double totalHours = logbookRepo.sumHoursByTraineeAndTraineeship(trainee.getId(), activeTraineeship.getId());
@@ -74,9 +71,6 @@ public class LogbookController {
             trainee.getId(), activeTraineeship.getId(), LogbookEntry.Status.APPROVED);
 
         model.addAttribute("entries", entries);
-        model.addAttribute("startDate", startDate);
-        model.addAttribute("endDate", endDate);
-        model.addAttribute("status", status);
         model.addAttribute("activeTraineeship", activeTraineeship);
         model.addAttribute("totalHours", totalHours != null ? totalHours : 0.0);
         model.addAttribute("approvedHours", approvedHours != null ? approvedHours : 0.0);
@@ -90,23 +84,51 @@ public class LogbookController {
         User user = userRepo.findByUsername(auth.getName())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (!user.getRole().equals(User.Role.ROLE_TRAINEE)) {
+        System.out.println("Debug - User ID: " + user.getId());
+        System.out.println("Debug - User Role: " + user.getRole());
+        System.out.println("Debug - User Roles: " + user.getRoles());
+
+        if (!user.hasRole(User.Role.ROLE_TRAINEE)) {
+            System.out.println("Debug - User does not have ROLE_TRAINEE");
             return "redirect:/home";
         }
 
         TraineeProfile trainee = traineeRepo.findByUserId(user.getId());
+        System.out.println("Debug - Trainee Profile: " + (trainee != null ? "Found" : "Not Found"));
+        
         if (trainee == null) {
+            System.out.println("Debug - Trainee profile not found for user ID: " + user.getId());
             redirectAttrs.addFlashAttribute("error", "Trainee profile not found");
-            return "redirect:/home";
+            return "redirect:/logbook";
         }
 
         Traineeship activeTraineeship = traineeshipRepo.findFirstByAssignedTraineeIdOrderByStartDateDesc(trainee.getId());
-        if (activeTraineeship == null || 
-            activeTraineeship.getStatus() != Traineeship.Status.FILLED || 
-            LocalDate.now().isBefore(activeTraineeship.getStartDate()) || 
-            LocalDate.now().isAfter(activeTraineeship.getEndDate())) {
-            redirectAttrs.addFlashAttribute("error", "You don't have an active traineeship. Logbook entries can only be created during an active traineeship.");
-            return "redirect:/home";
+        System.out.println("Debug - Active Traineeship: " + (activeTraineeship != null ? "Found" : "Not Found"));
+        
+        if (activeTraineeship == null) {
+            System.out.println("Debug - No active traineeship found");
+            redirectAttrs.addFlashAttribute("error", "You don't have an active traineeship. Please wait for a traineeship to be assigned to you.");
+            return "redirect:/logbook";
+        }
+
+        if (activeTraineeship.getStatus() != Traineeship.Status.FILLED) {
+            System.out.println("Debug - Traineeship status is not FILLED: " + activeTraineeship.getStatus());
+            redirectAttrs.addFlashAttribute("error", "Your traineeship is not active yet. Please wait for it to be filled.");
+            return "redirect:/logbook";
+        }
+
+        if (LocalDate.now().isBefore(activeTraineeship.getStartDate())) {
+            System.out.println("Debug - Current date is before traineeship start date");
+            redirectAttrs.addFlashAttribute("error", "Your traineeship hasn't started yet. It will begin on " + 
+                activeTraineeship.getStartDate().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+            return "redirect:/logbook";
+        }
+
+        if (LocalDate.now().isAfter(activeTraineeship.getEndDate())) {
+            System.out.println("Debug - Current date is after traineeship end date");
+            redirectAttrs.addFlashAttribute("error", "Your traineeship has ended on " + 
+                activeTraineeship.getEndDate().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+            return "redirect:/logbook";
         }
 
         LogbookEntry entry = new LogbookEntry();
@@ -284,7 +306,7 @@ public class LogbookController {
         User user = userRepo.findByUsername(auth.getName())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (!user.getRole().equals(User.Role.ROLE_TRAINEE)) {
+        if (!user.hasRole(User.Role.ROLE_TRAINEE)) {
             return "redirect:/home";
         }
 

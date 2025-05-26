@@ -57,7 +57,10 @@ public class Traineeship {
     private List<Application> applications = new ArrayList<>();
 
     @OneToOne(mappedBy = "traineeship", cascade = CascadeType.ALL)
-    private TraineeshipEvaluation evaluation;
+    private CompanyEvaluation companyEvaluation;
+
+    @OneToOne(mappedBy = "traineeship", cascade = CascadeType.ALL)
+    private ProfessorEvaluation professorEvaluation;
 
     @Enumerated(EnumType.STRING)
     private Status status = Status.OPEN;
@@ -192,16 +195,32 @@ public class Traineeship {
         this.status = Status.COMPLETED;
     }
 
-    public TraineeshipEvaluation getEvaluation() {
-        return evaluation;
+    public boolean hasCompanyEvaluation() {
+        return companyEvaluation != null;
     }
 
-    public void setEvaluation(TraineeshipEvaluation evaluation) {
-        this.evaluation = evaluation;
+    public boolean hasProfessorEvaluation() {
+        return professorEvaluation != null;
     }
 
-    public boolean hasEvaluation() {
-        return evaluation != null;
+    public boolean hasBothEvaluations() {
+        return hasCompanyEvaluation() && hasProfessorEvaluation();
+    }
+
+    public CompanyEvaluation getCompanyEvaluation() {
+        return companyEvaluation;
+    }
+
+    public void setCompanyEvaluation(CompanyEvaluation evaluation) {
+        this.companyEvaluation = evaluation;
+    }
+
+    public ProfessorEvaluation getProfessorEvaluation() {
+        return professorEvaluation;
+    }
+
+    public void setProfessorEvaluation(ProfessorEvaluation evaluation) {
+        this.professorEvaluation = evaluation;
     }
 
     public String getCompletionOutcome() {

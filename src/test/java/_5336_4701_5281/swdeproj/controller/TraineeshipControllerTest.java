@@ -166,7 +166,7 @@ class TraineeshipControllerTest {
     @Test
     void completeTraineeship() {
         when(traineeshipRepo.findById(anyLong())).thenReturn(Optional.of(new Traineeship()));
-        String view = controller.completeTraineeship(1L, "PASS", "comments", redirectAttrs, authentication);
+        String view = controller.completeTraineeship(1L, "PASS", "comments", authentication, redirectAttrs);
         assertTrue(view.startsWith("redirect:"));
     }
 }

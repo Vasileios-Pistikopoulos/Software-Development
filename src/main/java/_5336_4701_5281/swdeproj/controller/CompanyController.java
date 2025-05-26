@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -50,47 +51,56 @@ public class CompanyController {
         return "company/assigned-traineeships";
     }
 
-    @PostMapping("/evaluations/submit")
-    public String submitEvaluation(@RequestParam Long traineeshipId,
-                                 @RequestParam Integer motivation,
-                                 @RequestParam Integer effectiveness,
-                                 @RequestParam Integer efficiency,
+    @PostMapping("/traineeships/{id}/evaluate")
+    public String submitEvaluation(@PathVariable Long id,
+                                 @RequestParam Integer studentMotivation,
+                                 @RequestParam Integer studentEffectiveness,
+                                 @RequestParam Integer studentEfficiency,
+                                 @RequestParam(required = false) String comments,
                                  Authentication authentication,
                                  RedirectAttributes redirectAttrs) {
         User user = userService.getCurrentUser(authentication);
-        Company company = companyRepo.findByUserId(user.getId());
-        
-        Traineeship traineeship = traineeshipRepo.findById(traineeshipId)
-            .orElseThrow(() -> new RuntimeException("Traineeship not found"));
-        
-        // Verify that the company owns this traineeship
-        if (!traineeship.getCompany().getId().equals(company.getId())) {
-            redirectAttrs.addFlashAttribute("error", "You can only evaluate your own traineeships");
-            return "redirect:/company/assigned-traineeships";
+        if (user.getRole() != User.Role.ROLE_COMPANY) {
+            return "redirect:/";
         }
-        
-        // Check if evaluation already exists
-        if (evaluationRepo.findByTraineeshipIdAndEvaluatorType(traineeshipId, Evaluation.EvaluatorType.COMPANY).isPresent()) {
-            redirectAttrs.addFlashAttribute("error", "Evaluation already submitted for this traineeship");
-            return "redirect:/company/assigned-traineeships";
+
+        Traineeship traineeship = traineeshipRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Traineeship not found"));
+
+        // Check if the company is the owner of the traineeship
+        if (!traineeship.getCompany().getId().equals(user.getCompanyProfile().getId())) {
+            redirectAttrs.addFlashAttribute("error", "You are not authorized to evaluate this traineeship");
+            return "redirect:/company/traineeships";
         }
-        
+
+        // Check if company evaluation already exists
+        if (traineeship.hasCompanyEvaluation()) {
+            redirectAttrs.addFlashAttribute("error", "This traineeship has already been evaluated by the company");
+            return "redirect:/company/traineeships";
+        }
+
+        // Validate ratings
+        if (studentMotivation < 1 || studentMotivation > 5 ||
+            studentEffectiveness < 1 || studentEffectiveness > 5 ||
+            studentEfficiency < 1 || studentEfficiency > 5) {
+            redirectAttrs.addFlashAttribute("error", "All ratings must be between 1 and 5");
+            return "redirect:/company/traineeships/" + id + "/evaluate";
+        }
+
         // Create and save evaluation
-        Evaluation evaluation = new Evaluation();
+        CompanyEvaluation evaluation = new CompanyEvaluation();
         evaluation.setTraineeship(traineeship);
-        evaluation.setEvaluatorType(Evaluation.EvaluatorType.COMPANY);
-        evaluation.setMotivationRating(motivation);
-        evaluation.setEffectivenessRating(effectiveness);
-        evaluation.setEfficiencyRating(efficiency);
-        evaluation.setFacilitiesRating(5); // Default value for company evaluations
-        evaluation.setGuidanceRating(5); // Default value for company evaluations
-        evaluation.setDate(LocalDate.now());
-        evaluation.setEvaluator(user);
-        
-        evaluationRepo.save(evaluation);
-        
+        evaluation.setStudentMotivation(studentMotivation);
+        evaluation.setStudentEffectiveness(studentEffectiveness);
+        evaluation.setStudentEfficiency(studentEfficiency);
+        evaluation.setComments(comments);
+        evaluation.setEvaluationDate(LocalDateTime.now());
+
+        traineeship.setCompanyEvaluation(evaluation);
+        traineeshipRepo.save(traineeship);
+
         redirectAttrs.addFlashAttribute("success", "Evaluation submitted successfully");
-        return "redirect:/company/assigned-traineeships";
+        return "redirect:/company/traineeships";
     }
 
     private TraineeshipDto convertToDto(Traineeship traineeship) {
@@ -116,9 +126,18 @@ public class CompanyController {
             dto.setSupervisorName(traineeship.getSupervisor().getFullName());
         }
 
-        // Check if company evaluation exists
-        dto.setHasEvaluation(evaluationRepo.findByTraineeshipIdAndEvaluatorType(
-            traineeship.getId(), Evaluation.EvaluatorType.COMPANY).isPresent());
+        // Handle company evaluation
+        if (traineeship.hasCompanyEvaluation()) {
+            dto.setHasCompanyEvaluation(true);
+            CompanyEvaluation evaluation = traineeship.getCompanyEvaluation();
+            dto.setCompanyStudentMotivation(evaluation.getStudentMotivation());
+            dto.setCompanyStudentEffectiveness(evaluation.getStudentEffectiveness());
+            dto.setCompanyStudentEfficiency(evaluation.getStudentEfficiency());
+            dto.setCompanyComments(evaluation.getComments());
+            dto.setCompanyEvaluationDate(evaluation.getEvaluationDate());
+        } else {
+            dto.setHasCompanyEvaluation(false);
+        }
 
         return dto;
     }

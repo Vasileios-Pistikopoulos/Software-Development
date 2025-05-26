@@ -26,19 +26,29 @@ public class TraineeshipDto {
     private Traineeship.Status status;
     private List<ApplicationDto> applications;
 
-    // Evaluation fields
-    private Integer studentMotivation;
-    private Integer studentEffectiveness;
-    private Integer studentEfficiency;
-    private Integer companyFacilities;
-    private Integer companyGuidance;
-    private String evaluationComments;
-    private LocalDateTime evaluationDate;
+    // Company evaluation fields
+    private boolean hasCompanyEvaluation;
+    private Integer companyStudentMotivation;
+    private Integer companyStudentEffectiveness;
+    private Integer companyStudentEfficiency;
+    private String companyComments;
+    private LocalDateTime companyEvaluationDate;
 
-    // Add completion fields
+    // Professor evaluation fields
+    private boolean hasProfessorEvaluation;
+    private Integer professorStudentMotivation;
+    private Integer professorStudentEffectiveness;
+    private Integer professorStudentEfficiency;
+    private Integer professorCompanyFacilities;
+    private Integer professorCompanyGuidance;
+    private String professorComments;
+    private LocalDateTime professorEvaluationDate;
+
+    // Completion fields
     private String completionOutcome;
     private String completionComments;
     private LocalDate completionDate;
+    private boolean hasBothEvaluations;
 
     // === Getters & Setters ===
 
@@ -99,60 +109,118 @@ public class TraineeshipDto {
     public List<ApplicationDto> getApplications() { return applications; }
     public void setApplications(List<ApplicationDto> applications) { this.applications = applications; }
 
-    public Integer getStudentMotivation() {
-        return studentMotivation;
+    public boolean isHasCompanyEvaluation() {
+        return hasCompanyEvaluation;
     }
 
-    public void setStudentMotivation(Integer studentMotivation) {
-        this.studentMotivation = studentMotivation;
+    public void setHasCompanyEvaluation(boolean hasCompanyEvaluation) {
+        this.hasCompanyEvaluation = hasCompanyEvaluation;
     }
 
-    public Integer getStudentEffectiveness() {
-        return studentEffectiveness;
+    public boolean isHasProfessorEvaluation() {
+        return hasProfessorEvaluation;
     }
 
-    public void setStudentEffectiveness(Integer studentEffectiveness) {
-        this.studentEffectiveness = studentEffectiveness;
+    public void setHasProfessorEvaluation(boolean hasProfessorEvaluation) {
+        this.hasProfessorEvaluation = hasProfessorEvaluation;
     }
 
-    public Integer getStudentEfficiency() {
-        return studentEfficiency;
+    // Company evaluation getters and setters
+    public Integer getCompanyStudentMotivation() {
+        return companyStudentMotivation;
     }
 
-    public void setStudentEfficiency(Integer studentEfficiency) {
-        this.studentEfficiency = studentEfficiency;
+    public void setCompanyStudentMotivation(Integer companyStudentMotivation) {
+        this.companyStudentMotivation = companyStudentMotivation;
     }
 
-    public Integer getCompanyFacilities() {
-        return companyFacilities;
+    public Integer getCompanyStudentEffectiveness() {
+        return companyStudentEffectiveness;
     }
 
-    public void setCompanyFacilities(Integer companyFacilities) {
-        this.companyFacilities = companyFacilities;
+    public void setCompanyStudentEffectiveness(Integer companyStudentEffectiveness) {
+        this.companyStudentEffectiveness = companyStudentEffectiveness;
     }
 
-    public Integer getCompanyGuidance() {
-        return companyGuidance;
+    public Integer getCompanyStudentEfficiency() {
+        return companyStudentEfficiency;
     }
 
-    public void setCompanyGuidance(Integer companyGuidance) {
-        this.companyGuidance = companyGuidance;
+    public void setCompanyStudentEfficiency(Integer companyStudentEfficiency) {
+        this.companyStudentEfficiency = companyStudentEfficiency;
     }
 
-    public String getEvaluationComments() {
-        return evaluationComments;
+    public String getCompanyComments() {
+        return companyComments;
     }
 
-    public void setEvaluationComments(String evaluationComments) {
-        this.evaluationComments = evaluationComments;
+    public void setCompanyComments(String companyComments) {
+        this.companyComments = companyComments;
     }
 
-    public LocalDateTime getEvaluationDate() {
-        return evaluationDate;
+    public LocalDateTime getCompanyEvaluationDate() {
+        return companyEvaluationDate;
     }
 
-    public void setEvaluationDate(LocalDateTime evaluationDate) {
-        this.evaluationDate = evaluationDate;
+    public void setCompanyEvaluationDate(LocalDateTime companyEvaluationDate) {
+        this.companyEvaluationDate = companyEvaluationDate;
+    }
+
+    // Professor evaluation getters and setters
+    public Integer getProfessorStudentMotivation() {
+        return professorStudentMotivation;
+    }
+
+    public void setProfessorStudentMotivation(Integer professorStudentMotivation) {
+        this.professorStudentMotivation = professorStudentMotivation;
+    }
+
+    public Integer getProfessorStudentEffectiveness() {
+        return professorStudentEffectiveness;
+    }
+
+    public void setProfessorStudentEffectiveness(Integer professorStudentEffectiveness) {
+        this.professorStudentEffectiveness = professorStudentEffectiveness;
+    }
+
+    public Integer getProfessorStudentEfficiency() {
+        return professorStudentEfficiency;
+    }
+
+    public void setProfessorStudentEfficiency(Integer professorStudentEfficiency) {
+        this.professorStudentEfficiency = professorStudentEfficiency;
+    }
+
+    public Integer getProfessorCompanyFacilities() {
+        return professorCompanyFacilities;
+    }
+
+    public void setProfessorCompanyFacilities(Integer professorCompanyFacilities) {
+        this.professorCompanyFacilities = professorCompanyFacilities;
+    }
+
+    public Integer getProfessorCompanyGuidance() {
+        return professorCompanyGuidance;
+    }
+
+    public void setProfessorCompanyGuidance(Integer professorCompanyGuidance) {
+        this.professorCompanyGuidance = professorCompanyGuidance;
+    }
+
+    public String getProfessorComments() {
+        return professorComments;
+    }
+
+    public void setProfessorComments(String professorComments) {
+        this.professorComments = professorComments;
+    }
+
+    public LocalDateTime getProfessorEvaluationDate() {
+        return professorEvaluationDate;
+    }
+
+    public void setProfessorEvaluationDate(LocalDateTime professorEvaluationDate) {
+        this.professorEvaluationDate = professorEvaluationDate;
     }
 
     public String getCompletionOutcome() {
@@ -177,5 +245,13 @@ public class TraineeshipDto {
 
     public void setCompletionDate(LocalDate completionDate) {
         this.completionDate = completionDate;
+    }
+
+    public boolean isHasBothEvaluations() {
+        return hasProfessorEvaluation && hasCompanyEvaluation;
+    }
+
+    public void setHasBothEvaluations(boolean hasBothEvaluations) {
+        this.hasBothEvaluations = hasBothEvaluations;
     }
 } 

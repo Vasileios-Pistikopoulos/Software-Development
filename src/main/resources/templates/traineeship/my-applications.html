@@ -30,7 +30,7 @@
         <!-- Applications List -->
         <div th:if="${applications.empty}" class="alert alert-info">
             You haven't submitted any applications yet.
-            <a th:href="@{/traineeships/apply}" class="alert-link">Submit an application</a>
+            <a th:href="@{/traineeships}" class="alert-link">Browse available positions</a>
         </div>
 
         <div th:if="${!applications.empty}" class="row">
